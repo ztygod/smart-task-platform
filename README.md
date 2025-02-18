@@ -66,8 +66,8 @@ npm run start:dev
 ### 3. 启动前端服务
 ```bash
 cd frontend
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 ```
 
 ### 4. 访问项目
