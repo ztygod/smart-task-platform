@@ -2,7 +2,6 @@
     <div class="login-container">
         <h2>登录</h2>
         <form @submit.prevent="handleLogin">
-            <label for=""></label>
         </form>
     </div>
 </template>
