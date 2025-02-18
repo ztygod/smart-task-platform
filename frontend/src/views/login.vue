@@ -1,44 +1,84 @@
 <template>
     <div class="login-container">
+        <h1 class="name">tianyi task</h1>
         <div class="login-box">
             <h2 class="login-title">登录</h2>
-            <form @submit.prevent="handleLogin">
                 <div class="login-input">
-                    <label>用户名</label>
-                    <input 
-                        v-model="pageData.username"
-                        type="text"
-                        id="username"
+                    <label class="login-label-1">用户名</label>
+                    <el-input 
+                        v-model="pageData.username" 
+                        style="width: 240px" 
                         placeholder="请输入用户名"
-                        required
-                    >
+                     />
                 </div>
                 <div class="login-input">
-                    <label for="密码">密码</label>
-                    <input 
+                    <label class="login-label-2">密码</label>
+                    <el-input
                         v-model="pageData.password"
+                        style="width: 240px"
                         type="password"
-                        id="password"
                         placeholder="请输入密码"
-                        required
-                    >
+                        show-password
+                    />
                 </div>
-                <el-button type="primary" round>登录</el-button>
-            </form>
+                <el-button  
+                    v-if="!pageData.loading"
+                    @click="handleLogin"
+                    class="login-button" 
+                    type="primary" 
+                    round
+                >
+                    {{ pageData.loading ? '登陆中' : '登录'}}
+                </el-button>
+                <el-button 
+                    v-if="pageData.loading"
+                    class="login-button" 
+                    type="primary" 
+                    round 
+                    loading
+                >
+                    <template #loading>
+                    <div class="custom-loading">
+                        <svg class="circular" viewBox="-10, -10, 50, 50">
+                        <path
+                            class="path"
+                            d="
+                            M 30 15
+                            L 28 17
+                            M 25.61 25.61
+                            A 15 15, 0, 0, 1, 15 30
+                            A 15 15, 0, 1, 1, 27.99 7.5
+                            L 15 15
+                        "
+                            style="stroke-width: 4px; fill: rgba(0, 0, 0, 0)"
+                        />
+                        </svg>
+                    </div>
+                    </template>
+                    Loading
+                </el-button>
         </div>
     </div>
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref } from 'vue';
+import { reactive } from 'vue';
+import { h } from 'vue';
+import { ElNotification } from 'element-plus';
 
 const pageData = reactive({
     username:'',
-    password:''
+    password:'',
+    loading:false,
 
 })
 const handleLogin = () => {
-
+    pageData.loading = !pageData.loading;
+    //根据不同情况进行弹窗展示（现在还没写）
+    ElNotification({
+        title: 'Title',
+        message: h('i', { style: 'color: teal' }, '登录成功or用户名或密码错误'),
+    });
 };
 </script>
 
@@ -54,13 +94,25 @@ const handleLogin = () => {
 
 @keyframes fadeIn {
   0% { opacity: 0; }
+  50% {opacity: 0.5;}
   100% { opacity: 1; }
 }
-
+h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 50px;
+    text-align: center;
+    color: black;
+}
+.name{
+    opacity: 0;
+    animation: fadeIn 1s ease-out forwards;
+    animation-delay: 0.5s; /* 延迟0.5秒后开始动画 */
+}
 .login-container{
     /* width: 100vw; */
     height: 100vh;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     background: linear-gradient(to right, #6a11cb, #2575fc);
@@ -70,9 +122,40 @@ const handleLogin = () => {
     border-radius: 10px;
     width: 450px;
     height: 300px;
-    box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.3); /* 阴影：向右下方偏移10px，模糊20px，颜色为半透明黑 */
+    box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.3); /* 阴影：向右下方偏移10px，模糊20px，颜色为半透明黑 */
     opacity: 0;
     animation: fadeIn 1s ease-out forwards;
     animation-delay: 0.5s; /* 延迟0.5秒后开始动画 */
+}
+.login-title{
+    text-align: center;
+}
+.login-label-1{
+    margin-right: 20px;
+}
+.login-label-2{
+    margin-right: 35px;
+}
+.login-input{
+    margin: 30px 0px 20px 50px;
+}
+.login-button{
+    width: 300px;
+    margin-top: 20px;
+    margin-left: 60px;
+}
+.el-button .custom-loading .circular {
+  margin-right: 6px;
+  width: 18px;
+  height: 18px;
+  animation: loading-rotate 2s linear infinite;
+}
+.el-button .custom-loading .circular .path {
+  animation: loading-dash 1.5s ease-in-out infinite;
+  stroke-dasharray: 90, 150;
+  stroke-dashoffset: 0;
+  stroke-width: 2;
+  stroke: var(--el-button-text-color);
+  stroke-linecap: round;
 }
 </style>
