@@ -5,3 +5,8 @@ export enum HTTPMethod {
     DELETE = 'DELETE',
     PATCH = 'PATCH'
 }
+
+export default interface UserLogin {
+    name: string,
+    password: string,
+}

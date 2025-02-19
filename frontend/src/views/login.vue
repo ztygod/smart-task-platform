@@ -65,20 +65,47 @@
 import { reactive } from 'vue';
 import { h } from 'vue';
 import { ElNotification } from 'element-plus';
+import user from '../apis/user';
+import { HTTPMethod } from '../types/base';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 const pageData = reactive({
     username:'',
     password:'',
     loading:false,
 
 })
-const handleLogin = () => {
-    pageData.loading = !pageData.loading;
-    //根据不同情况进行弹窗展示（现在还没写）
-    ElNotification({
-        title: 'Title',
-        message: h('i', { style: 'color: teal' }, '登录成功or用户名或密码错误'),
-    });
+const handleLogin = async () => {
+    pageData.loading = !pageData.loading;//开始加载状态
+
+    try {
+        const response = await user.login('user/login',HTTPMethod.POST,
+            {
+                name:pageData.username,
+                password:pageData.password,
+            }
+        );
+
+        const token = response.data.token;
+        localStorage.setItem('authToken', token);
+
+        ElNotification({
+            title: '欢迎回来',
+            message: h('i', { style: 'color: teal' }, '登录成功'),
+        });
+        
+        //路由跳转到首页
+        router.push('/home');
+    } catch (error) {
+        //这里要分类讨论，要么是密码或用户名错误，要么网络问题
+        ElNotification({
+            title: 'Title',
+            message: h('i', { style: 'color: teal' }, '用户名或密码错误 or 网络问题'),
+        });
+    } finally{
+        pageData.loading = false;
+    }
 };
 </script>
 
