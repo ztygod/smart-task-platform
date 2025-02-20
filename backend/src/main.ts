@@ -5,12 +5,12 @@ import { User } from './user/entities/user.entity';
 
 // 初始化 DataSource
 const dataSource = new DataSource({
-  type: 'postgres',
+  type: 'mysql',
   host: 'localhost',
-  port: 5432,
-  username: 'test',
-  password: 'test',
-  database: 'test_db',
+  port: 3306,
+  username: 'root',
+  password: 'zty',
+  database: 'smart_task',
   entities: [User],
   synchronize: true,
 });

@@ -35,7 +35,7 @@ export class UserController {
     return this.userService.remove(+id);
   }
   @Post('login')
-  async login(@Body('user') loginUserDto: LoginUserDto): Promise<UserRO> {
+  async login(@Body() loginUserDto: LoginUserDto): Promise<UserRO> {
     const _user = await this.userService.findOne(loginUserDto);
 
     const error = { user: 'not found' };
