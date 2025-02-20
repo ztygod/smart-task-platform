@@ -1,11 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { LoginUserDto } from './dto/login-user.dto';
+import { UserRO } from './user.interface';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
@@ -30,5 +32,19 @@ export class UserController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);
+  }
+  @Post('/login')
+  async login(@Body('user') loginUserDto: LoginUserDto): Promise<UserRO> {
+    const _user = await this.userService.findOne(loginUserDto);
+
+    const error = { user: 'not found' };
+    if (!_user) {
+      throw new HttpException({ error }, 401);
+    }
+
+    const token = this.userService.generateJWT(_user);
+    const { username } = _user;
+    const user = { username, token };
+    return { user }
   }
 }
