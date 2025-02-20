@@ -52,7 +52,7 @@
 
 ### 1. 克隆项目
 ```bash
-git clone https://github.com/your-username/smart-task-platform.git
+git clone https://github.com/ztygod/smart-task-platform.git
 cd smart-task-platform
 ```
 
@@ -88,6 +88,7 @@ smart-task-platform/
 │   │   └── main.ts      # 入口文件
 ├── backend/            # 后端代码
 │   ├── src/
+|   |   ├── user/        # 用户模块
 │   │   ├── auth/        # 认证模块
 │   │   ├── tasks/       # 任务模块
 │   │   ├── websocket/   # WebSocket模块
