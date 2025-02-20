@@ -4,14 +4,15 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 import { UserRO } from './user.interface';
+import { User } from './user.decorator';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) { }
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  @Post('create')
+  async create(@Body() createUserDto: CreateUserDto) {
+    return await this.userService.create(createUserDto);
   }
 
   @Get()
@@ -20,8 +21,8 @@ export class UserController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
+  findOne(@User('id') id: number) {
+    //return this.userService.findOne(+id);
   }
 
   @Patch(':id')
@@ -33,7 +34,7 @@ export class UserController {
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);
   }
-  @Post('/login')
+  @Post('login')
   async login(@Body('user') loginUserDto: LoginUserDto): Promise<UserRO> {
     const _user = await this.userService.findOne(loginUserDto);
 
