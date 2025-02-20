@@ -40,7 +40,7 @@
 
 ### 后端
 - **框架**: Nest.js
-- **数据库**: PostgreSQL + TypeORM
+- **数据库**: MySQL + TypeORM
 - **实时通信**: WebSocket
 - **自然语言处理**: chrono-node + natural
 - **认证**: JWT
