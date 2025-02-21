@@ -10,7 +10,7 @@ const routes = [
         meta: { requiresAuth: true } // 标记需要认证的页面
     },
     {
-        path: '/home',
+        path: '/login',
         name: 'login',
         component: login,
     }
@@ -24,7 +24,7 @@ const router = createRouter({
 
 //创建路由守卫，检查是否登录
 router.beforeEach((to, from, next) => {
-    const isAuthenticated = localStorage.getItem('authToekn');
+    const isAuthenticated = localStorage.getItem('authToken');
     if (!isAuthenticated && to.meta.requiresAuth) {
         next({ name: 'login' });
     } else {

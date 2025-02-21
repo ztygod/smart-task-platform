@@ -86,17 +86,15 @@ const handleLogin = async () => {
                 password:pageData.password,
             }
         );
-
-        const token = response.data.token;
+        const token = response.data.user.token;
         localStorage.setItem('authToken', token);
 
         ElNotification({
             title: '欢迎回来',
             message: h('i', { style: 'color: teal' }, '登录成功'),
         });
-        
         //路由跳转到首页
-        router.push('/home');
+        router.push('/');
     } catch (error) {
         //这里要分类讨论，要么是密码或用户名错误，要么网络问题
         ElNotification({
