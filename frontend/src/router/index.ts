@@ -1,4 +1,4 @@
-import { createRouter, createMemoryHistory } from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
 import Signboard from "../views/signboard.vue";
 import Report from "../views/report.vue";
 import Task from "../views/task.vue";
@@ -7,7 +7,15 @@ import Login from "../views/login.vue";
 
 const routes = [
     {
-        path: '/',
+        path: '/',  // 根路径
+        redirect: '/home/task',  // 默认重定向到 /home
+    },
+    {
+        path: '/home',
+        redirect: '/home/task'
+    },
+    {
+        path: '/home',
         name: 'home',
         component: Home,
         meta: { requiresAuth: true },// 标记需要认证的页面
@@ -41,7 +49,7 @@ const routes = [
 
 //创建路由实例
 const router = createRouter({
-    history: createMemoryHistory(),
+    history: createWebHistory(),
     routes
 });
 
