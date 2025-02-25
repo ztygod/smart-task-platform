@@ -1,5 +1,6 @@
 <template>
-    <div :class="['sidebar',{collapsed:homeDate.isCollapsed}]">
+    <div class="container">
+        <div :class="['sidebar',{collapsed:homeDate.isCollapsed}]">
         <header class="sidebar-header">
             <h3 
                 v-if="!homeDate.isCollapsed"
@@ -27,26 +28,42 @@
                 <ul>
                     <li>
                         <router-link to="/home/task" active-class="active" class="router">
-                            <el-icon size="30" color="white"><House /></el-icon>
-                            <span v-if="!homeDate.isCollapsed" class="link-text">任务</span>
+                            <div class="line1">
+                                <el-icon size="30" color="white" class="svg"><House /></el-icon>
+                            </div>
+                            <div class="line2">
+                                <span v-if="!homeDate.isCollapsed" class="link-text">任务</span>
+                            </div>
                         </router-link>
                     </li>
                     <li>
                         <router-link to="/home/signboard" active-class="active" class="router">
-                            <el-icon size="30" color="white"><Notification /></el-icon>
-                            <span v-if="!homeDate.isCollapsed" class="link-text">看板</span>
+                            <div class="line1">
+                                <el-icon size="30" color="white" class="svg"><Notification /></el-icon>
+                            </div>
+                            <div class="line2">
+                                <span v-if="!homeDate.isCollapsed" class="link-text">看板</span>
+                            </div>
                         </router-link>
                     </li>
                     <li>
                         <router-link to="/home/report" active-class="active" class="router">
-                            <el-icon size="30" color="white"><DocumentRemove /></el-icon>
-                            <span v-if="!homeDate.isCollapsed" class="link-text">每日汇报</span>
+                            <div class="line1">
+                                <el-icon size="30" color="white" class="svg"><DocumentRemove /></el-icon>
+                            </div>
+                            <div class="line2">
+                                <span v-if="!homeDate.isCollapsed" class="link-text">每日汇报</span>
+                            </div>
                         </router-link>
                     </li>
                 </ul>
             </nav>
         </main>
     </div>    
+    <div class="content">
+        <router-view></router-view>
+    </div>
+    </div>
 </template>
 
 <script lang="ts" setup>
@@ -63,6 +80,12 @@ const collapsedSidebar = () => {
 </script>
 
 <style scoped>
+.container{
+    display: flex;
+}
+.content{
+    flex: 1;
+}
 .sidebar{
     width: 250px;
     height: 100vh;
@@ -121,14 +144,24 @@ li:hover {
 }
 .router{
     text-decoration: none;
-    display: inline-block;
+    display: flex;
     width: 100%;
     height: 40px;
+    line-height: 40px;
     border-radius: 10px;
 }
 .link-text{
+    font-size: 20px;
     color: white;
-    text-align: center;
-    line-height: 35px;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+.svg{
+    margin-top: 1px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+.line1{
+    margin-top: 4px;
 }
 </style>
