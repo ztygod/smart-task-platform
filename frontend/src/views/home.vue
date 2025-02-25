@@ -29,7 +29,7 @@
                     <li>
                         <router-link to="/home/task" active-class="active" class="router">
                             <div class="line1">
-                                <el-icon size="30" color="white" class="svg"><House /></el-icon>
+                                <el-icon size="30" color="black" class="svg"><House /></el-icon>
                             </div>
                             <div class="line2">
                                 <span v-if="!homeDate.isCollapsed" class="link-text">任务</span>
@@ -39,7 +39,7 @@
                     <li>
                         <router-link to="/home/signboard" active-class="active" class="router">
                             <div class="line1">
-                                <el-icon size="30" color="white" class="svg"><Notification /></el-icon>
+                                <el-icon size="30" color="black" class="svg"><Notification /></el-icon>
                             </div>
                             <div class="line2">
                                 <span v-if="!homeDate.isCollapsed" class="link-text">看板</span>
@@ -49,7 +49,7 @@
                     <li>
                         <router-link to="/home/report" active-class="active" class="router">
                             <div class="line1">
-                                <el-icon size="30" color="white" class="svg"><DocumentRemove /></el-icon>
+                                <el-icon size="30" color="black" class="svg"><DocumentRemove /></el-icon>
                             </div>
                             <div class="line2">
                                 <span v-if="!homeDate.isCollapsed" class="link-text">每日汇报</span>
@@ -82,6 +82,7 @@ const collapsedSidebar = () => {
 <style scoped>
 .container{
     display: flex;
+    background-color: #b6c4da;
 }
 .content{
     flex: 1;
@@ -89,7 +90,9 @@ const collapsedSidebar = () => {
 .sidebar{
     width: 250px;
     height: 100vh;
-    background-color: #b6c4da;
+    border-radius: 7px;
+    margin: 10px 5px 0 5px;
+    background-color: white;
     color: black;
     transition: width 0.3s ease;
     display: flex;
@@ -152,7 +155,7 @@ li:hover {
 }
 .link-text{
     font-size: 20px;
-    color: white;
+    color: black;
     display: inline-block;
     margin-bottom: 10px;
 }
