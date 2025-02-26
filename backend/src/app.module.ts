@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { User } from './user/entities/user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { TaskModule } from './task/task.module';
 
 @Module({
   imports: [UserModule,
@@ -16,7 +17,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       database: 'smart_task', // 数据库名称
       entities: [User], // 你的实体类（可以根据需要配置）
       synchronize: true,
-    })// 开发模式下可以启用自动同步数据库结构
+    }),
+    TaskModule// 开发模式下可以启用自动同步数据库结构
   ],
   controllers: [AppController],
   providers: [AppService],

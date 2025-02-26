@@ -84,14 +84,11 @@ const collapsedSidebar = () => {
     display: flex;
     background-color: #b6c4da;
 }
-.content{
-    flex: 1;
-}
 .sidebar{
     width: 250px;
-    height: 100vh;
+    height: calc(100vh - 15px);
     border-radius: 7px;
-    margin: 10px 5px 0 5px;
+    margin: 10px 10px 5px 5px;
     background-color: white;
     color: black;
     transition: width 0.3s ease;
@@ -166,5 +163,13 @@ li:hover {
 }
 .line1{
     margin-top: 4px;
+}
+.content{
+    flex: 1;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    margin-right: 10px;
+    background-color: white;
+    border-radius: 7px;
 }
 </style>
