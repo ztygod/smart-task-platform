@@ -2,6 +2,31 @@
   <div class="container">
     <div class="main">
       <button class="btn btn-blue" @click="sort">To original order</button>
+      <div class="header">
+        <div class="text text1">
+          Task
+        </div>
+        <div class="vertical-line"></div>
+        <div class="text text2">
+          是否完成
+        </div>
+        <div class="vertical-line"></div>
+        <div class="text text3">
+          截止日期
+        </div>
+        <div class="vertical-line"></div>
+        <div class="text text4">
+          创建日期
+        </div>
+        <div class="vertical-line"></div>
+        <div class="text text5">
+          创建日期
+        </div>
+        <div class="vertical-line"></div>
+        <div class="text text6">
+          任务描述
+        </div>
+      </div>
       <VueDraggableNext
         class="list-group"
         tag="ul"
@@ -14,19 +39,39 @@
             v-for="element in dragData.list"
             :key="element.order"
           >
-            <div> ssssss</div>
+          <div class="text text1">
+          Task
+        </div>
+        <div class="vertical-line-1"></div>
+        <div class="text text2">
+          是否完成
+        </div>
+        <div class="vertical-line-1"></div>
+        <div class="text text3">
+          截止日期
+        </div>
+        <div class="vertical-line-1"></div>
+        <div class="text text4">
+          创建日期
+        </div>
+        <div class="vertical-line-1"></div>
+        <div class="text text5">
+          创建日期
+        </div>
+        <div class="vertical-line-1"></div>
+        <div class="text text6">
+          任务描述
+        </div>
             {{ element.name }}
           </li>
         </transition-group>
       </VueDraggableNext>
     </div>
-    <rawDisplay :value="dragData.list" class="raw" />
   </div>
 </template>
 
 <script lang="ts" setup>
 import { VueDraggableNext } from 'vue-draggable-next';
-import rawDisplay from './raw.vue';
 import { computed, reactive } from 'vue';
 
 const message = [
@@ -39,11 +84,6 @@ const message = [
   'on',
   'Sortablejs',
 ]
-const dragData = reactive({
-  list: message.map((name, index) => {
-        return { name, order: index + 1 }
-      })
-})
 const sort = () => {
       dragData.list = dragData.list.sort((a, b) => a.order - b.order)
 }
@@ -55,18 +95,76 @@ const dragOptions = computed(() => {
         ghostClass: 'ghost',
       }
 })
+const dragData = reactive({
+  list: message.map((name, index) => {
+        return { name, order: index + 1 }
+      })
+})
 </script>
 
-<style>
+<style scoped>
 .container{
   display: flex; /* 设置为 Flexbox 布局 */
-  justify-content: center; /* 水平居中对齐 */
+
 }
 .main{
-  width: 33.33%; /* w-2/6 对应的宽度 */
-  border-radius: 0.375rem; /* rounded 对应的圆角 */
-  overflow: hidden; /* overflow-hidden 对应的样式，隐藏溢出的内容 */
-  padding: 1.25rem; /* p-5 对应的内边距 */
+  width: 80%; 
+  border-radius: 0.375rem; 
+  overflow: hidden; 
+  padding: 1.25rem; 
+}
+.header{
+  background-color: #3b82f6;
+  height: 30px;
+  margin: 0.25rem; 
+  border-radius: 0.375rem; 
+  display: flex;  /* 使用 flexbox 布局 */
+  column-gap: 20px;
+  border: 1px solid black;
+}
+.vertical-line {
+  width: 2px;          
+  height: 100%;        
+  background-color: black; 
+}
+.vertical-line-1{
+  width: 2px;          
+  height: 100%;
+  background-color: white;
+}
+.text{
+  color: white;
+  line-height: 30px;
+}
+.text1{
+  margin-left: 50px;
+  margin-right: 40px;
+}
+.text2{
+  margin-left: 20px;
+  margin-right: 20px;
+}
+.text6{
+  margin-left: 200px;
+}
+.list-group {
+  min-height: 20px;
+  list-style-type: none; 
+  padding-left: 0; 
+}
+.list-group-item {
+  display: flex;
+  height: 30px;
+  cursor: move;
+  background-color: #e5e7eb;
+  margin: 0.25rem; 
+  border-radius: 0.375rem; 
+}
+.list-group-item i {
+  cursor: pointer;
+}
+.raw{
+   width: 16rem; 
 }
 .button {
   margin-top: 35px;
@@ -81,40 +179,24 @@ const dragOptions = computed(() => {
   opacity: 0.5;
   background: #c8ebfb;
 }
-.list-group {
-  min-height: 20px;
-}
-.list-group-item {
-  cursor: move;
-  padding: 0.25rem; /* p-1 对应的内边距 */
-  background-color: #e5e7eb; /* bg-gray-200 对应的背景色 */
-  margin: 0.25rem; /* m-1 对应的外边距 */
-  border-radius: 0.375rem; /* rounded-md 对应的圆角 */
-}
-.list-group-item i {
-  cursor: pointer;
-}
-.raw{
-   width: 16rem; /* 64 * 0.25rem = 16rem */
-}
 /* 基础按钮样式 */
 .btn {
-  font-weight: 700; /* font-bold */
-  padding-top: 0.5rem; /* py-2 */
-  padding-bottom: 0.5rem; /* py-2 */
-  padding-left: 1rem; /* px-4 */
-  padding-right: 1rem; /* px-4 */
-  border-radius: 0.375rem; /* rounded */
+  font-weight: 700; 
+  padding-top: 0.5rem; 
+  padding-bottom: 0.5rem; 
+  padding-left: 1rem; 
+  padding-right: 1rem; 
+  border-radius: 0.375rem; 
 }
 
 /* 蓝色按钮样式 */
 .btn-blue {
-  background-color: #3b82f6; /* bg-blue-500 */
-  color: white; /* text-white */
+  background-color: #3b82f6; 
+  color: white; 
 }
 
 /* 蓝色按钮悬停样式 */
 .btn-blue:hover {
-  background-color: #1d4ed8; /* bg-blue-700 */
+  background-color: #1d4ed8; 
 }
 </style>

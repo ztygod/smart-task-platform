@@ -83,6 +83,7 @@ const collapsedSidebar = () => {
 .container{
     display: flex;
     background-color: #b6c4da;
+    overflow-y: hidden;
 }
 .sidebar{
     width: 250px;
