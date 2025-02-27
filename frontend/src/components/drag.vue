@@ -8,7 +8,7 @@
         </div>
         <div class="vertical-line"></div>
         <div class="text text2">
-          是否完成
+          状态
         </div>
         <div class="vertical-line"></div>
         <div class="text text3">
@@ -39,30 +39,29 @@
             v-for="element in dragData.list"
             :key="element.order"
           >
-          <div class="text text1">
+        <div class="text-content text-content-1">
           Task
         </div>
         <div class="vertical-line-1"></div>
-        <div class="text text2">
-          是否完成
+        <div class="text-content text-content-2">
+          <popover class="popover"></popover>
         </div>
         <div class="vertical-line-1"></div>
-        <div class="text text3">
+        <div class="text-content text-content-3">
           截止日期
         </div>
         <div class="vertical-line-1"></div>
-        <div class="text text4">
+        <div class="text-content text-content-4">
           创建日期
         </div>
         <div class="vertical-line-1"></div>
-        <div class="text text5">
+        <div class="text-content text-content-5">
           创建日期
         </div>
         <div class="vertical-line-1"></div>
-        <div class="text text6">
-          任务描述
+        <div class="text-content text-content-6">
+          <write></write>
         </div>
-            {{ element.name }}
           </li>
         </transition-group>
       </VueDraggableNext>
@@ -72,6 +71,8 @@
 
 <script lang="ts" setup>
 import { VueDraggableNext } from 'vue-draggable-next';
+import popover from './popover.vue';
+import write from './write.vue';
 import { computed, reactive } from 'vue';
 
 const message = [
@@ -108,7 +109,7 @@ const dragData = reactive({
 
 }
 .main{
-  width: 80%; 
+  width:100%; 
   border-radius: 0.375rem; 
   overflow: hidden; 
   padding: 1.25rem; 
@@ -142,7 +143,7 @@ const dragData = reactive({
 }
 .text2{
   margin-left: 20px;
-  margin-right: 20px;
+  margin-right: 50px;
 }
 .text6{
   margin-left: 200px;
@@ -162,6 +163,30 @@ const dragData = reactive({
 }
 .list-group-item i {
   cursor: pointer;
+}
+.text-content{
+  color: black;
+  line-height: 30px;
+}
+.text-content-1{
+  width: 140px;
+}
+.text-content-2{
+  display: flex;
+  width: 145px;
+}
+.text-content-3{
+  width: 105px;
+}
+.text-content-4{
+  width: 105px;
+}
+.text-content-5{
+  width: 105px;
+}
+.text-content-6{
+  flex: 1;
+  display: flex;
 }
 .raw{
    width: 16rem; 
