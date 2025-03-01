@@ -8,7 +8,7 @@
         @click="toDone"
         class="btn btn-1"
     >
-        Done
+        已完成
       </el-button>
       <el-button 
         tag="div"
@@ -17,21 +17,21 @@
         @click="toDoing"
         class="btn"        
     >
-        Working
+        进行中
       </el-button>
       <el-button 
         tag="div"
         size="small" 
         type="danger"
-        @click="visible = false"  
+        @click="toStart"  
         class="btn"  
     >
-        cancel
+        待开始
       </el-button>
     </div>
     <template #reference>
-      <el-button @click="visible = true" :class="[{done: isDone},{doing:isDoing}]">
-        {{ popoverData.state === 'doing' ? 'Doing' : 'Done' }}
+      <el-button @click="visible = true" :class="[{done: isDone},{doing:isDoing},{start:isStart}]">
+        {{ popoverData.state }}
     </el-button>
     </template>
   </el-popover>
@@ -42,22 +42,28 @@ import { computed, reactive, ref } from 'vue'
 
 const visible = ref(false)
 const popoverData = reactive({
-    state: 'doing',
+    state: '进行中',
 })
-
 const isDone = computed(() => {
-    return popoverData.state === 'done'
+    return popoverData.state === '已完成'
 })
 const isDoing = computed(() => {
-    return popoverData.state === 'doing'
+    return popoverData.state === '进行中'
+})
+const isStart = computed(() => {
+  return popoverData.state === '待开始'
 })
 const toDone = () => {
     visible.value = false;
-    popoverData.state = 'done';
+    popoverData.state = '已完成';
 }
 const toDoing = () => {
     visible.value = false;
-    popoverData.state = 'doing';
+    popoverData.state = '进行中';
+}
+const toStart = () => {
+  visible.value = false;
+  popoverData.state = '待开始'
 }
 </script>
 
@@ -81,6 +87,10 @@ const toDoing = () => {
 }
 .doing{
     background-color: rgb(253, 199, 3);
+    flex:1;
+}
+.start{
+    background-color: rgb(211, 88, 77);
     flex:1;
 }
 </style>

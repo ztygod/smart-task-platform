@@ -7,7 +7,7 @@
     placeholder=""
   />
   <el-button @click="changeState" class="btn">
-    {{ disabled ? '編輯' : '完成' }}
+    {{ disabled ? '编辑' : '完成' }}
   </el-button>
 </template>
 

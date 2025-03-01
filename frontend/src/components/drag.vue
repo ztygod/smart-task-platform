@@ -20,7 +20,7 @@
         </div>
         <div class="vertical-line"></div>
         <div class="text text5">
-          创建日期
+          更新日期
         </div>
         <div class="vertical-line"></div>
         <div class="text text6">
@@ -56,7 +56,7 @@
         </div>
         <div class="vertical-line-1"></div>
         <div class="text-content text-content-5">
-          创建日期
+          更新日期
         </div>
         <div class="vertical-line-1"></div>
         <div class="text-content text-content-6">
