@@ -10,3 +10,9 @@ export default interface UserLogin {
     name: string,
     password: string,
 }
+
+export interface TaskCreate {
+    title: string,
+    state: string,
+    desc: string
+}

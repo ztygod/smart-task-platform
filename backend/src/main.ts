@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DataSource } from 'typeorm';
 import { User } from './user/entities/user.entity';
+import { Task } from './task/entities/task.entity';
 
 // 初始化 DataSource
 const dataSource = new DataSource({
@@ -11,7 +12,7 @@ const dataSource = new DataSource({
   username: 'root',
   password: 'zty',
   database: 'smart_task',
-  entities: [User],
+  entities: [User, Task],
   synchronize: true,
 });
 
