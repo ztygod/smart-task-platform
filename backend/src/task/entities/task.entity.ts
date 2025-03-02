@@ -9,13 +9,13 @@ export class Task {
     title: string;
 
     @Column()  // 定义 description 字段
-    description: string | null;
+    description: string;
 
     @Column()  // 定义 status 字段
     status: string;
 
     @Column()  // 定义 due_date 字段
-    due_date: Date | null;
+    due_date: Date;
 
     @CreateDateColumn()  // 自动设置为当前时间
     created_at: Date;

@@ -4,8 +4,8 @@ import instance from "./axios";
 class Task {
     create(url: string, method: HTTPMethod, data: TaskCreate) {
         return instance({
-            url: url,
-            method: method,
+            url,
+            method,
             data
         })
     }

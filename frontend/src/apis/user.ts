@@ -6,8 +6,8 @@ class User {
     //登录
     login(url: string, method: HTTPMethod, data: UserLogin) {
         return instance({
-            url: url,
-            method: method,
+            url,
+            method,
             data
         })
     }

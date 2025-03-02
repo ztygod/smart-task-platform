@@ -16,3 +16,9 @@ export interface TaskCreate {
     state: string,
     desc: string
 }
+
+export enum TaskState {
+    Wait = '0',
+    Doing = '1',
+    Done = '2',
+}
