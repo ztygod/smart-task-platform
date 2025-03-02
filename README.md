@@ -33,7 +33,7 @@
 ### 前端
 - **框架**: Vue3 + TypeScript
 - **状态管理**: Pinia
-- **UI 组件库**: NaiveUI
+- **UI 组件库**: Element-Plus
 - **可视化**: ECharts
 - **实时通信**: Socket.io-client
 - **构建工具**: Vite
