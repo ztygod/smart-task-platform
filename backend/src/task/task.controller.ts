@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { TaskService } from './task.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { createByNaturalLanguageDto } from './dto/create-by-natural-language.dto';
 
 @Controller('task')
 export class TaskController {
@@ -10,6 +11,11 @@ export class TaskController {
   @Post('create')
   create(@Body() createTaskDto: CreateTaskDto) {
     return this.taskService.create(createTaskDto);
+  }
+
+  @Post('parse')
+  async parse(@Body() createByNaturalLanguageDto: createByNaturalLanguageDto) {
+    return await this.taskService.parseTaskText(createByNaturalLanguageDto);
   }
 
   @Get()

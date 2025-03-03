@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { DataSource } from 'typeorm';
 import { User } from './user/entities/user.entity';
 import { Task } from './task/entities/task.entity';
+import * as nodejieba from 'nodejieba';
 
 // 初始化 DataSource
 const dataSource = new DataSource({
