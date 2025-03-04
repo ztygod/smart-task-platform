@@ -59,7 +59,7 @@ export class TaskService {
     //分词
     const tokens = nodejieba.cut(text);
 
-    //词干提取
+    //词干提取(针对英文)
     const stems = tokens.map((t) => this.stemmer.stem(t));
 
     //提取关键词，基于TF-IDF
@@ -111,39 +111,29 @@ export class TaskService {
     return { task: taskRo };
   }
 
-  //解析截止时间
-  private parseDueDate(text: string): Date | null {
-    const results = chrono.parse(text);
-    return results[0]?.start?.date() || null
-  }
-
   //训练TF-IDF模型
   private trainTfIdf(trainingData: string[]) {
     trainingData.forEach((text) => this.tfidf.addDocument(text));
   }
 
   //关键词提取
-  private extractKeywords(text: string) {
-    const keywordScores: Record<string, number> = {};
-
-    //TF-IDF分析文本
-    this.tfidf.tfidfs(text, (docIndex, measure, word: string) => {
-      if (!keywordScores[word]) {
-        keywordScores[word] = 0;
-      }
-      keywordScores[word] += measure;
-    });
-
-    // 取权重最高的3个词
-    return Object.entries(keywordScores)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 3)
-      .map(([word]) => word)
+  extractKeywords(text: string, topN: number = 5): string[] {
+    // 使用结巴分词提取关键词
+    const keywords = nodejieba.extract(text, topN);
+    return keywords.map((kw) => kw.word);
   }
+
 
   //提取日期
   private extractDueDate(text: string) {
-    const parseDate = chrono.parse(text);
+    //替换不明确的日期表达方式为更明确的格式
+    const normalizedText = text.replace(/下周(\S+)/, '下周星期$1');
+    //使用简体中文解析
+    const parse = chrono.zh.hant;
+    const parseDate = parse.parse(normalizedText);
+
+    console.log(parseDate)
+
     if (parseDate.length > 0) {
       const date = parseDate[0].start.date();
       return date ? date.toISOString() : '';
@@ -172,5 +162,45 @@ export class TaskService {
     const urgentWords = ['紧急', '立刻', '马上'];
     const regex = new RegExp(urgentWords.join('|'), 'i');
     return regex.test(text);
+  }
+
+  //更为详细的关键词计算
+  calculateTfIdf(text: string, documents: string[]): Record<string, number> {
+    const tfidf = new Map<string, number>();
+
+    // 分词
+    const words = nodejieba.cut(text);
+
+    // 计算 TF（词频）
+    const tf = new Map<string, number>();
+    words.forEach((word) => {
+      tf.set(word, (tf.get(word) || 0) + 1);
+    });
+
+    // 计算 IDF（逆文档频率）
+    const idf = new Map<string, number>();
+    documents.forEach((doc) => {
+      const docWords = new Set(nodejieba.cut(doc)); // 去重
+      words.forEach((word) => {
+        if (docWords.has(word)) {
+          idf.set(word, (idf.get(word) || 0) + 1);
+        }
+      });
+    });
+
+    // 计算 TF-IDF
+    words.forEach((word) => {
+      const tfValue = tf.get(word) || 0;
+      const idfValue = Math.log(documents.length / ((idf.get(word) || 0) + 1)); // 避免除零
+      tfidf.set(word, tfValue * idfValue);
+    });
+
+    // 转换为普通对象
+    const result: Record<string, number> = {};
+    tfidf.forEach((value, key) => {
+      result[key] = value;
+    });
+
+    return result;
   }
 }
