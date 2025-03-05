@@ -38,19 +38,33 @@ export class TaskService {
     taskInstance.created_at = new Date();
     taskInstance.updated_at = new Date();
 
-    const error = await validate(taskInstance);
-    if (error.length > 0) {
-      const errorMessageFromat = { username: 'Taskinput is not valid.' };
-      throw new HttpException({ message: 'Input data validation failed', errorMessageFromat }, HttpStatus.BAD_REQUEST);
-    } else {
-      const newTask = await this.taskRepository.save(taskInstance);
-      return this.buildTaskRO(newTask)
-    }
+    return await this.storeToDB(taskInstance);
   }
 
   //添加自然语言解析后的任务
-  async ceateByNaturalLanguage(ceateByNaturalLanguage: createByNaturalLanguageDto) {
+  async createByNaturalLanguage(ceateByNaturalLanguage: createByNaturalLanguageDto): Promise<TaskRo> {
+    let parseText = this.parseTaskText(ceateByNaturalLanguage);
+    let status;
+    switch (parseText.status) {
+      case '待开始':
+        status = TaskStatus.Wait;
+        break;
+      case '进行中':
+        status = TaskStatus.Doing;
+        break;
+      case '已完成':
+        status = TaskStatus.Done;
+        break;
+    }
 
+    let taskInstance = new Task();
+    taskInstance.title = parseText.keyWords.slice(0, 2).join('');
+    taskInstance.description = parseText.tokens.join('');
+    taskInstance.status = status
+    taskInstance.due_date = new Date(parseText.dueDate);
+    taskInstance.created_at = taskInstance.updated_at = new Date();
+
+    return await this.storeToDB(taskInstance);
   }
 
   //解析自然语言
@@ -111,6 +125,18 @@ export class TaskService {
     return { task: taskRo };
   }
 
+  //把我们的task实例，存入数据库中
+  async storeToDB(taskInstance: Task) {
+    const error = await validate(taskInstance);
+    if (error.length > 0) {
+      const errorMessageFromat = { username: 'Taskinput is not valid.' };
+      throw new HttpException({ message: 'Input data validation failed', errorMessageFromat }, HttpStatus.BAD_REQUEST);
+    } else {
+      const newTask = await this.taskRepository.save(taskInstance);
+      return this.buildTaskRO(newTask)
+    }
+  }
+
   //训练TF-IDF模型
   private trainTfIdf(trainingData: string[]) {
     trainingData.forEach((text) => this.tfidf.addDocument(text));
@@ -127,7 +153,7 @@ export class TaskService {
   //提取日期
   private extractDueDate(text: string) {
     //替换不明确的日期表达方式为更明确的格式
-    const normalizedText = text.replace(/下周(\S+)/, '下周星期$1');
+    const normalizedText = text.replace(/周/g, '星期');
     //使用简体中文解析
     const parse = chrono.zh.hant;
     const parseDate = parse.parse(normalizedText);
@@ -146,7 +172,7 @@ export class TaskService {
     const statusKeyWords = {
       '待开始': ['未开始', '待办', '准备', '即将'],
       '进行中': ['进行中', '正在做', '正在进行'],
-      '已完成': ['完成', '已完成', '做完', '结束'],
+      '已完成': ['已完成', '已做完', '已结束'],
     }
 
     for (let [status, keyWords] of Object.entries(statusKeyWords)) {
@@ -203,4 +229,5 @@ export class TaskService {
 
     return result;
   }
+
 }

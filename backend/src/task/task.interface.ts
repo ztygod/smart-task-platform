@@ -7,7 +7,7 @@ export enum TaskStatus {
 export interface TaskData {
     title: string,
     status: TaskStatus,
-    due_date,
+    due_date: Date
 }
 
 export interface TaskRo {

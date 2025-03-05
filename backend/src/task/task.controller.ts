@@ -15,7 +15,7 @@ export class TaskController {
 
   @Post('parse')
   async parse(@Body() createByNaturalLanguageDto: createByNaturalLanguageDto) {
-    return await this.taskService.parseTaskText(createByNaturalLanguageDto);
+    return await this.taskService.createByNaturalLanguage(createByNaturalLanguageDto);
   }
 
   @Get()
