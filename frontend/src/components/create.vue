@@ -28,6 +28,14 @@
             placeholder="请输入任务描述"
         />
       </el-form-item>
+      <el-form-item label="截止时间" :label-width="formLabelWidth">
+        <el-date-picker
+          v-model="form.due_date"
+          type="date"
+          placeholder="选择截止日期"
+          :size="size"
+      />
+      </el-form-item>
     </el-form>
     <template #footer>
       <div class="dialog-footer">
@@ -45,12 +53,16 @@ import { reactive, ref } from 'vue'
 
 const dialogFormVisible = ref(false)
 const formLabelWidth = '140px'
+const size = ref<'default' | 'large' | 'small'>('default')
 
 const form = reactive({
   name: '',
   state:'',
   desc: '',
+  due_date:''
 })
+
+
 
 </script>
 
