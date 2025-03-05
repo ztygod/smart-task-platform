@@ -17,6 +17,15 @@ export interface TaskCreate {
     desc: string
 }
 
+export interface TaskData {
+    id: string,
+    title: string,
+    description: string,
+    status: string,
+    due_date: string,
+    created_at: string,
+    updated_at: string,
+}
 export enum TaskState {
     Wait = '0',
     Doing = '1',

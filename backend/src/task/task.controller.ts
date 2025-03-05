@@ -18,7 +18,7 @@ export class TaskController {
     return await this.taskService.createByNaturalLanguage(createByNaturalLanguageDto);
   }
 
-  @Get()
+  @Get('get')
   findAll() {
     return this.taskService.findAll();
   }

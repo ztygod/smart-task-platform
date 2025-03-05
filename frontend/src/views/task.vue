@@ -10,7 +10,7 @@
         </div>
         <div class="chat-input-container">
             <input type="text" class="chat-input" placeholder="利用自然语言添加任务,如：下周一完成代码编写">
-            <button class="send-button">发送</button>
+            <button class="send-button" @click="test">发送</button>
         </div>
     </main>
 </template>
@@ -18,6 +18,17 @@
 <script lang="ts" setup>
 import drag from '../components/drag.vue';
 import create from '../components/create.vue';
+import { useTaskStore } from '../stores/taskStore';
+import { onMounted } from 'vue';
+
+const taskStore = useTaskStore();
+const test = async () => {
+    await taskStore.fetchTask()
+}
+
+onMounted(async () => {
+    await taskStore.fetchTask();
+})
 </script>
 
 <style scoped>

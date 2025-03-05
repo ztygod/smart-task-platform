@@ -98,8 +98,8 @@ export class TaskService {
     }
   }
 
-  findAll() {
-    return `This action returns all task`;
+  async findAll() {
+    return await this.taskRepository.find();
   }
 
   findOne(id: number) {

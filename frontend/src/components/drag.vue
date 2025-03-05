@@ -40,7 +40,7 @@
             :key="element.order"
           >
         <div class="text-content text-content-1">
-          Task
+          {{element.item.title}}
         </div>
         <div class="vertical-line-1"></div>
         <div class="text-content text-content-2">
@@ -48,15 +48,15 @@
         </div>
         <div class="vertical-line-1"></div>
         <div class="text-content text-content-3">
-          截止日期
+          {{ element.item.due_date }}
         </div>
         <div class="vertical-line-1"></div>
         <div class="text-content text-content-4">
-          创建日期
+          {{element.item.created_at}}
         </div>
         <div class="vertical-line-1"></div>
         <div class="text-content text-content-5">
-          更新日期
+          {{element.item.updated_at}}
         </div>
         <div class="vertical-line-1"></div>
         <div class="text-content text-content-6">
@@ -74,17 +74,15 @@ import { VueDraggableNext } from 'vue-draggable-next';
 import popover from './popover.vue';
 import write from './write.vue';
 import { computed, reactive } from 'vue';
+import { useTaskStore } from '../stores/taskStore';
+import type { TaskData } from '../types/base';
 
-const message = [
-  'vue.js 3.0',
-  'vue.draggable',
-  'draggable',
-  'component',
-  'for',
-  'based',
-  'on',
-  'Sortablejs',
-]
+const taskStore = useTaskStore();
+const dragData = reactive({
+  list: taskStore.tasks.map((item:TaskData, index) => {
+        return { item , order: index + 1 }
+      })
+})
 const sort = () => {
       dragData.list = dragData.list.sort((a, b) => a.order - b.order)
 }
@@ -95,11 +93,6 @@ const dragOptions = computed(() => {
         disabled: false,
         ghostClass: 'ghost',
       }
-})
-const dragData = reactive({
-  list: message.map((name, index) => {
-        return { name, order: index + 1 }
-      })
 })
 </script>
 
