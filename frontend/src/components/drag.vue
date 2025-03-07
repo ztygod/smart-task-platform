@@ -73,7 +73,7 @@
 import { VueDraggableNext } from 'vue-draggable-next';
 import popover from './popover.vue';
 import write from './write.vue';
-import { computed, reactive } from 'vue';
+import { computed, onMounted, reactive } from 'vue';
 import { useTaskStore } from '../stores/taskStore';
 import type { TaskData } from '../types/base';
 
@@ -93,6 +93,9 @@ const dragOptions = computed(() => {
         disabled: false,
         ghostClass: 'ghost',
       }
+})
+onMounted(async () => {
+    await taskStore.fetchTask();
 })
 </script>
 
