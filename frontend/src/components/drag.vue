@@ -76,7 +76,7 @@ import write from './write.vue';
 import { computed, onMounted, reactive } from 'vue';
 import { useTaskStore } from '../stores/taskStore';
 import type { TaskData } from '../types/base';
-
+//水水水水
 const taskStore = useTaskStore();
 const dragData = reactive({
   list: taskStore.tasks.map((item:TaskData, index) => {
