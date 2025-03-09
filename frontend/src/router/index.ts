@@ -5,25 +5,21 @@ import Task from "../views/task.vue";
 import Home from "../views/home.vue";
 import Login from "../views/login.vue";
 import { useTaskStore } from "../stores/taskStore";
+import Error from "../views/error.vue";
 
 const routes = [
     {
         path: '/',  // 根路径
-        redirect: '/home/task',  // 默认重定向到 /home
-        beforeEnter: async (to: any, from: any, next: any) => {
-            const taskStore = useTaskStore();
-            try {
-                await taskStore.fetchTask()//预加载数据
-                next()
-            } catch (error) {
-                console.error("用户数据加载失败", error);
-                next("/error"); // 失败时跳转错误页
-            }
-        }
+        redirect: '/home/report',  // 默认重定向到 /home
     },
     {
         path: '/home',
-        redirect: '/home/task'
+        redirect: '/home/report'
+    },
+    {
+        path: '/error',
+        name: 'error',
+        component: Error,
     },
     {
         path: '/home',

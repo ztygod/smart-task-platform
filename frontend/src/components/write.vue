@@ -1,7 +1,7 @@
 <template>
   <el-input
     class="input"
-    v-model="input"
+    v-model="props.value"
     style="width: 650px"
     :disabled
     placeholder=""
@@ -14,7 +14,12 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 
-const input = ref('ssssssssssssssssssssss')
+const props = defineProps({
+  value:{
+    type:String,
+    default:''
+  }
+})
 const disabled = ref(true);
 const changeState = () => {
   disabled.value = !disabled.value;

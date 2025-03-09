@@ -60,7 +60,7 @@
         </div>
         <div class="vertical-line-1"></div>
         <div class="text-content text-content-6">
-          <write></write>
+          <write :value="element.item.description"></write>
         </div>
           </li>
         </transition-group>
@@ -73,7 +73,7 @@
 import { VueDraggableNext } from 'vue-draggable-next';
 import popover from './popover.vue';
 import write from './write.vue';
-import { computed, nextTick, onMounted, reactive } from 'vue';
+import { computed, nextTick, onBeforeMount, onMounted, reactive } from 'vue';
 import { useTaskStore } from '../stores/taskStore';
 import type { TaskData } from '../types/base';
 //水水水水
@@ -94,7 +94,9 @@ const dragOptions = computed(() => {
         ghostClass: 'ghost',
       }
 })
-
+onMounted(() => {
+  
+});
 </script>
 
 <style scoped>

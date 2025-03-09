@@ -27,22 +27,22 @@
             <nav>
                 <ul>
                     <li>
-                        <router-link to="/home/task" active-class="active" class="router">
-                            <div class="line1">
-                                <el-icon size="30" color="black" class="svg"><House /></el-icon>
-                            </div>
-                            <div class="line2">
-                                <span v-if="!homeDate.isCollapsed" class="link-text">任务</span>
-                            </div>
-                        </router-link>
-                    </li>
-                    <li>
                         <router-link to="/home/signboard" active-class="active" class="router">
                             <div class="line1">
                                 <el-icon size="30" color="black" class="svg"><Notification /></el-icon>
                             </div>
                             <div class="line2">
                                 <span v-if="!homeDate.isCollapsed" class="link-text">看板</span>
+                            </div>
+                        </router-link>
+                    </li>
+                    <li>
+                        <router-link to="/home/task" active-class="active" class="router">
+                            <div class="line1">
+                                <el-icon size="30" color="black" class="svg"><House /></el-icon>
+                            </div>
+                            <div class="line2">
+                                <span v-if="!homeDate.isCollapsed" class="link-text">任务</span>
                             </div>
                         </router-link>
                     </li>
