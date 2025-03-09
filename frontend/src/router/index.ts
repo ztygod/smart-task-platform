@@ -4,11 +4,22 @@ import Report from "../views/report.vue";
 import Task from "../views/task.vue";
 import Home from "../views/home.vue";
 import Login from "../views/login.vue";
+import { useTaskStore } from "../stores/taskStore";
 
 const routes = [
     {
         path: '/',  // 根路径
         redirect: '/home/task',  // 默认重定向到 /home
+        beforeEnter: async (to: any, from: any, next: any) => {
+            const taskStore = useTaskStore();
+            try {
+                await taskStore.fetchTask()//预加载数据
+                next()
+            } catch (error) {
+                console.error("用户数据加载失败", error);
+                next("/error"); // 失败时跳转错误页
+            }
+        }
     },
     {
         path: '/home',
@@ -25,6 +36,16 @@ const routes = [
                 name: 'task',
                 component: Task,
                 meta: { requiresAuth: true },// 标记需要认证的页面
+                beforeEnter: async (to: any, from: any, next: any) => {
+                    const taskStore = useTaskStore();
+                    try {
+                        await taskStore.fetchTask()//预加载数据
+                        next()
+                    } catch (error) {
+                        console.error("用户数据加载失败", error);
+                        next("/error"); // 失败时跳转错误页
+                    }
+                }
             },
             {
                 path: 'report',
