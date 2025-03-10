@@ -5,7 +5,7 @@
         tag="div"
         size="small" 
         type="primary" 
-        @click="toDone"
+        @click="changeStatus('2')"
         class="btn btn-1"
     >
         已完成
@@ -14,7 +14,7 @@
         tag="div"
         size="small" 
         type="warning" 
-        @click="toDoing"
+        @click="changeStatus('1')"
         class="btn"        
     >
         进行中
@@ -23,7 +23,7 @@
         tag="div"
         size="small" 
         type="danger"
-        @click="toStart"  
+        @click="changeStatus('0')"  
         class="btn"  
     >
         待开始
@@ -38,58 +38,59 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, reactive, ref, watch,defineProps } from 'vue'
+import {reactive, ref, watch} from 'vue'
+import { TaskState } from '../types/base'
 
 const visible = ref(false)
 const popoverData = reactive({
-    state: '进行中',
+    state: '待开始',
     style: [] as any,
 })
-const props = defineProps({
-  status: {
-    type: Number,
-    required: true
-  }
+let popoverStatus = defineModel({
+  type:String,
+  default:'0'
 })
 
-const stylesNow = watch(
-  () => props.status,
+watch(
+  () => popoverStatus.value,
   (newValue, oldValue) => {
-    switch (newValue) {
+    switch (+newValue) {
       case 0: 
-        popoverData.style = [{ start: true }];  
+        popoverData.style = [{ start: true }];
+        popoverData.state = '待开始';  
         break;
       case 1:
         popoverData.style = [{ doing: true }];
+        popoverData.state = '进行中';
         break;
       case 2:
         popoverData.style = [{ done: true }];
+        popoverData.state = '已完成';
         break;
       default:
         popoverData.style = []; 
         break;
     }
-  })
-const isDone = computed(() => {
-    return popoverData.state === '已完成'
-})
-const isDoing = computed(() => {
-    return popoverData.state === '进行中'
-})
-const isStart = computed(() => {
-  return popoverData.state === '待开始'
-})
-const toDone = () => {
-    visible.value = false;
-    popoverData.state = '已完成';
-}
-const toDoing = () => {
-    visible.value = false;
-    popoverData.state = '进行中';
-}
-const toStart = () => {
+  },
+  { immediate: true }
+)
+
+const changeStatus = (statusNow:String) => {
+  switch (statusNow){
+    case TaskState.Done:
+      popoverStatus.value = TaskState.Done;
+      popoverData.state = '已完成';
+      break;
+    case TaskState.Wait:
+      popoverStatus.value = TaskState.Wait;
+      popoverData.state = '待开始';
+      break;
+    case TaskState.Doing:
+      popoverStatus.value = TaskState.Doing;
+      popoverData.state = '进行中';
+      break;
+  }
   visible.value = false;
-  popoverData.state = '待开始'
 }
 </script>
 

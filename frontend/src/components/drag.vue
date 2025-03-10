@@ -44,7 +44,7 @@
         </div>
         <div class="vertical-line-1"></div>
         <div class="text-content text-content-2">
-          <popover class="popover" :status="+element.item.status"></popover>
+          <popover class="popover" v-model="element.item.status"></popover>
         </div>
         <div class="vertical-line-1"></div>
         <div class="text-content text-content-3">
@@ -73,7 +73,7 @@
 import { VueDraggableNext } from 'vue-draggable-next';
 import popover from './popover.vue';
 import write from './write.vue';
-import { computed, nextTick, onBeforeMount, onMounted, reactive } from 'vue';
+import { computed, onMounted, reactive } from 'vue';
 import { useTaskStore } from '../stores/taskStore';
 import type { TaskData } from '../types/base';
 //水水水水
