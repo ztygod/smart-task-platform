@@ -1,6 +1,6 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
-import { UpdateTaskDto } from './dto/update-task.dto';
+import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Task } from './entities/task.entity';
 import { Repository } from 'typeorm';
@@ -102,12 +102,26 @@ export class TaskService {
     return await this.taskRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} task`;
+  async findOne(id: number): Promise<Task> {
+    const task = await this.taskRepository.findOne({ where: { id } });
+
+    if (!task) {
+      throw new NotFoundException(`Task with ID ${id} not found`);
+    }
+
+    return task;
   }
 
-  update(id: number, updateTaskDto: UpdateTaskDto) {
-    return `This action updates a #${id} task`;
+  async updateStatus(UpdateTaskStatusDto: UpdateTaskStatusDto): Promise<Task> {
+    const { id, status } = UpdateTaskStatusDto;
+    const task = await this.findOne(+id);
+
+    if (!task) {
+      throw new NotFoundException(`ID 为 ${id} 的任务不存在`);
+    }
+
+    task.status = status;
+    return this.taskRepository.save(task);
   }
 
   remove(id: number) {

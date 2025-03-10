@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { TaskService } from './task.service';
 import { CreateTaskDto } from './dto/create-task.dto';
-import { UpdateTaskDto } from './dto/update-task.dto';
+import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
 import { createByNaturalLanguageDto } from './dto/create-by-natural-language.dto';
 
 @Controller('task')
@@ -28,9 +28,9 @@ export class TaskController {
     return this.taskService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto) {
-    return this.taskService.update(+id, updateTaskDto);
+  @Patch('update/status')
+  update(@Body() updateTaskStatusDto: UpdateTaskStatusDto) {
+    return this.taskService.updateStatus(updateTaskStatusDto);
   }
 
   @Delete(':id')

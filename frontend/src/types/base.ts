@@ -31,3 +31,8 @@ export enum TaskState {
     Doing = '1',
     Done = '2',
 }
+
+export interface UpdateTaskStatus {
+    id: string,
+    status: string,
+}

@@ -39,21 +39,29 @@
 
 <script lang="ts" setup>
 import {reactive, ref, watch} from 'vue'
-import { TaskState } from '../types/base'
+import { HTTPMethod, TaskState, type TaskData } from '../types/base'
+import task from '../apis/task';
 
 const visible = ref(false)
 const popoverData = reactive({
     state: '待开始',
     style: [] as any,
 })
-let popoverStatus = defineModel({
-  type:String,
-  default:'0'
-})
+let popoverModel = defineModel<TaskData>({
+    default:() => ({
+      id: '1',
+      title: '默认',
+      description: '默认',
+      status: '0',
+      due_date: '2025-3-10',
+      created_at: '2025-3-10',
+      updated_at: '2025-3-10',
+    })
+});
 
 watch(
-  () => popoverStatus.value,
-  (newValue, oldValue) => {
+  () => popoverModel.value?.status,
+  (newValue:any, oldValue) => {
     switch (+newValue) {
       case 0: 
         popoverData.style = [{ start: true }];
@@ -76,21 +84,32 @@ watch(
 )
 
 const changeStatus = (statusNow:String) => {
+  //前端展示字段改变
   switch (statusNow){
     case TaskState.Done:
-      popoverStatus.value = TaskState.Done;
+      popoverModel.value.status = TaskState.Done;
       popoverData.state = '已完成';
       break;
     case TaskState.Wait:
-      popoverStatus.value = TaskState.Wait;
+      popoverModel.value.status = TaskState.Wait;
       popoverData.state = '待开始';
       break;
     case TaskState.Doing:
-      popoverStatus.value = TaskState.Doing;
+      popoverModel.value.status = TaskState.Doing;
       popoverData.state = '进行中';
       break;
   }
   visible.value = false;
+
+  //向后端传递任务状态新值
+  task.updateTaskStatus(
+    '/task/update/status',
+    HTTPMethod.PATCH,
+    {
+      id:popoverModel.value.id,
+      status:popoverModel.value.status
+    }
+  ).then(() => {})
 }
 </script>
 

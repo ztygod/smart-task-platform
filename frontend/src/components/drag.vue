@@ -44,7 +44,8 @@
         </div>
         <div class="vertical-line-1"></div>
         <div class="text-content text-content-2">
-          <popover class="popover" v-model="element.item.status"></popover>
+          <popover class="popover" v-model="element.item">
+          </popover>
         </div>
         <div class="vertical-line-1"></div>
         <div class="text-content text-content-3">
