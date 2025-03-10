@@ -44,7 +44,7 @@
         </div>
         <div class="vertical-line-1"></div>
         <div class="text-content text-content-2">
-          <popover class="popover"></popover>
+          <popover class="popover" :status="+element.item.status"></popover>
         </div>
         <div class="vertical-line-1"></div>
         <div class="text-content text-content-3">
