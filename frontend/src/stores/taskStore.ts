@@ -10,14 +10,15 @@ export const useTaskStore = defineStore('taskStore', {
     actions: {
         // 加载任务数据
         async fetchTask() {
+            //下面注释代码逻辑错误，导致前端后端任务状态变化无法同步
             // 尝试从 localStorage 加载已存储的任务
-            const storedTasks = localStorage.getItem('tasks');
-            if (storedTasks) {
-                // 如果有存储的任务，直接恢复到 state
-                this.tasks = JSON.parse(storedTasks);
-                // 恢复任务 IDs
-                this.ids = this.tasks.map(task => task.id);
-            }
+            // const storedTasks = localStorage.getItem('tasks');
+            // if (storedTasks) {
+            //     // 如果有存储的任务，直接恢复到 state
+            //     this.tasks = JSON.parse(storedTasks);
+            //     // 恢复任务 IDs
+            //     this.ids = this.tasks.map(task => task.id);
+            // }
 
             try {
                 // 获取最新任务数据
