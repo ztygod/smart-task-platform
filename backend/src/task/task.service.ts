@@ -10,6 +10,7 @@ import { createByNaturalLanguageDto } from './dto/create-by-natural-language.dto
 import * as chrono from 'chrono-node';
 import * as natural from 'natural';
 import * as nodejieba from 'nodejieba';
+import { UpdateTaskDescDto } from './dto/update-task-desc.dto';
 
 @Injectable()
 export class TaskService {
@@ -112,8 +113,9 @@ export class TaskService {
     return task;
   }
 
-  async updateStatus(UpdateTaskStatusDto: UpdateTaskStatusDto): Promise<Task> {
-    const { id, status } = UpdateTaskStatusDto;
+  //更新任务状态
+  async updateStatus(updateTaskStatusDto: UpdateTaskStatusDto): Promise<Task> {
+    const { id, status } = updateTaskStatusDto;
     const task = await this.findOne(+id);
 
     if (!task) {
@@ -121,6 +123,19 @@ export class TaskService {
     }
 
     task.status = status;
+    return this.taskRepository.save(task);
+  }
+
+  //更新任务描述，逻辑与上面一致
+  async updateDescription(updateDescription: UpdateTaskDescDto): Promise<Task> {
+    const { id, description } = updateDescription;
+    const task = await this.findOne(+id);
+
+    if (!task) {
+      throw new NotFoundException(`ID 为 ${id} 的任务不存在`);
+    }
+
+    task.description = description;
     return this.taskRepository.save(task);
   }
 

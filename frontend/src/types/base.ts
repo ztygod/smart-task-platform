@@ -36,3 +36,8 @@ export interface UpdateTaskStatus {
     id: string,
     status: string,
 }
+
+export interface UpdateTaskDescription {
+    id: string,
+    description: string,
+}

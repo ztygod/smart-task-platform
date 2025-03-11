@@ -1,4 +1,4 @@
-import type { HTTPMethod, TaskCreate, UpdateTaskStatus } from "../types/base";
+import type { HTTPMethod, TaskCreate, UpdateTaskDescription, UpdateTaskStatus } from "../types/base";
 import instance from "./axios";
 
 class Task {
@@ -27,6 +27,13 @@ class Task {
     }
     //任务状态更新
     updateTaskStatus(url: string, method: HTTPMethod, data: UpdateTaskStatus) {
+        return instance({
+            url,
+            method,
+            data
+        })
+    }
+    updateTaskDescription(url: string, method: HTTPMethod, data: UpdateTaskDescription) {
         return instance({
             url,
             method,

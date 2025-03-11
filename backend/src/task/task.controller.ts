@@ -3,6 +3,7 @@ import { TaskService } from './task.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
 import { createByNaturalLanguageDto } from './dto/create-by-natural-language.dto';
+import { UpdateTaskDescDto } from './dto/update-task-desc.dto';
 
 @Controller('task')
 export class TaskController {
@@ -29,8 +30,13 @@ export class TaskController {
   }
 
   @Patch('update/status')
-  update(@Body() updateTaskStatusDto: UpdateTaskStatusDto) {
+  updateStatus(@Body() updateTaskStatusDto: UpdateTaskStatusDto) {
     return this.taskService.updateStatus(updateTaskStatusDto);
+  }
+
+  @Patch('update/description')
+  updateDescription(@Body() updateTaskDescDto: UpdateTaskDescDto) {
+    return this.taskService.updateDescription(updateTaskDescDto);
   }
 
   @Delete(':id')

@@ -61,7 +61,7 @@
         </div>
         <div class="vertical-line-1"></div>
         <div class="text-content text-content-6">
-          <write :value="element.item.description"></write>
+          <write v-model="element.item"></write>
         </div>
           </li>
         </transition-group>
