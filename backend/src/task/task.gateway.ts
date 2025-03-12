@@ -2,6 +2,7 @@ import { OnGatewayConnection, SubscribeMessage, WebSocketGateway, WebSocketServe
 import { Server, Socket } from 'socket.io';
 import { TaskService } from './task.service';
 import { Task } from './entities/task.entity';
+import { UserService } from 'src/user/user.service';
 
 @WebSocketGateway({ cors: true })
 export class TaskGateway implements OnGatewayConnection {
@@ -9,7 +10,8 @@ export class TaskGateway implements OnGatewayConnection {
   server: Server;
 
   constructor(
-    private readonly taskService: TaskService
+    private readonly taskService: TaskService,
+    private readonly userService: UserService
   ) { }
 
   //连接鉴权
@@ -21,32 +23,22 @@ export class TaskGateway implements OnGatewayConnection {
     }
   }
 
-  //监听任务编辑操作
-  @SubscribeMessage('taskEditing')
-  async handleMessage(client: Socket, taskId: string) {
-    const task = await this.taskService.findOne(+taskId);
-    const user = client.data.user;
-
-    //广播编辑者信息（除了自己）
-    client.broadcast.emit('taskEditing', {
-      taskId,
-      editor:
-      {
-        id: user.id,
-        name: user.name,
-      }
-    })
-
-    //更新任务当前的编辑者
-    await this.taskService.updateDescription()
+  //监听任务状态开始编辑
+  @SubscribeMessage('taskStatusEditing')
+  handleStatusEditing(client: Socket, payload: { taskId: String }) {
+    //广播给其他用户（排除自己）
+    client.broadcast.emit('taskStatusEditing', {
+      taskId: payload.taskId
+    });
   }
 
   //监听任务更新事件
-  @SubscribeMessage('taskUpdated')
-  async handleTaskUpdated(client: Socket, payload: { taskid: string, changes: Partial<Task> }) {
-    const updatedTask = await this.taskService.updateDescription();
-
-    //广播更新后的任务数据
-    this.server.emit('taskUpdated', updatedTask)
+  @SubscribeMessage('taskStatusEditEnd')
+  handleStatusEditEnd(client: Socket, payload: { taskId: String, status: String }) {
+    //向其他用户进行广播
+    client.broadcast.emit('taskStatusEditEnd', {
+      taskId: payload.taskId,
+      status: payload.status,
+    });
   }
 }

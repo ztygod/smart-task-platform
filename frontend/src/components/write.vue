@@ -17,7 +17,7 @@ import { HTTPMethod, type TaskData } from '../types/base';
 import task from '../apis/task';
 import { useSocket } from '../composables/useSocket';
 
-const {socket,isConnected} = useSocket()
+//const {socket,isConnected} = useSocket()
 const writeModel = defineModel<TaskData>({
   default:() => ({
       id: '1',
@@ -46,33 +46,33 @@ const updateDescription = () => {
   }
 }
 
-//开始编辑的时候通知其他人
-const startEditing = () => {
-  socket.emit('taskEditing',{
-    taskId:writeModel.value.id,
-    userId:,
-    userName:
-  })
-}
+// //开始编辑的时候通知其他人
+// const startEditing = () => {
+//   socket.emit('taskEditing',{
+//     taskId:writeModel.value.id,
+//     userId:,
+//     userName:
+//   })
+// }
 
-//停止编辑时通知
-const stopEditing = async () => {
-  socket.emit('taskEditEnd',{
-    tasId:writeModel.value.id
-  })
+// //停止编辑时通知
+// const stopEditing = async () => {
+//   socket.emit('taskEditEnd',{
+//     tasId:writeModel.value.id
+//   })
 
-  //保存修改到后端
-}
+//   //保存修改到后端
+// }
 
-onMounted(() => {
-  socket.on('taskEditing',({taskId,user} => {
+// onMounted(() => {
+//   socket.on('taskEditing',({taskId,user} => {
 
-  })
+//   })
 
-  socket.on('taskEditEnd',({taskId}) => {
+//   socket.on('taskEditEnd',({taskId}) => {
     
-  })
-})
+//   })
+// })
 </script>
 
 <style scoped>

@@ -5,7 +5,7 @@
         tag="div"
         size="small" 
         type="primary" 
-        @click="changeStatus('2')"
+        @click="stopStatusEditing('2')"
         class="btn btn-1"
     >
         已完成
@@ -14,7 +14,7 @@
         tag="div"
         size="small" 
         type="warning" 
-        @click="changeStatus('1')"
+        @click="stopStatusEditing('1')"
         class="btn"        
     >
         进行中
@@ -23,14 +23,14 @@
         tag="div"
         size="small" 
         type="danger"
-        @click="changeStatus('0')"  
+        @click="stopStatusEditing('0')"  
         class="btn"  
     >
         待开始
       </el-button>
     </div>
     <template #reference>
-      <el-button @click="visible = true" :class="popoverData.style">
+      <el-button @click="startStatusEditing" :class="popoverData.style">
         {{ popoverData.state }}
     </el-button>
     </template>
@@ -38,11 +38,14 @@
 </template>
 
 <script lang="ts" setup>
-import {reactive, ref, watch} from 'vue'
+import {onMounted, reactive, ref, watch} from 'vue'
 import { HTTPMethod, TaskState, type TaskData } from '../types/base'
 import task from '../apis/task';
+import { useSocket } from '../composables/useSocket';
+import { ElMessage } from 'element-plus';
 
 const visible = ref(false)
+const {socket} = useSocket();
 const popoverData = reactive({
     state: '待开始',
     style: [] as any,
@@ -83,6 +86,7 @@ watch(
   { immediate: true }
 )
 
+//改变任务状态
 const changeStatus = (statusNow:String) => {
   //前端展示字段改变
   switch (statusNow){
@@ -100,6 +104,20 @@ const changeStatus = (statusNow:String) => {
       break;
   }
   visible.value = false;
+}
+
+//开始编辑任务状态时通知其他人
+const startStatusEditing = () => {
+  visible.value = true;
+  socket.emit('taskStatusEditing',{
+    taskId:popoverModel.value.id,
+  })
+}
+
+//停止编辑时通知
+const stopStatusEditing = (statusNow:String) => {
+  //前端按钮样式修改
+  changeStatus(statusNow);
 
   //向后端传递任务状态新值
   task.updateTaskStatus(
@@ -110,7 +128,45 @@ const changeStatus = (statusNow:String) => {
       status:popoverModel.value.status
     }
   ).then(() => {})
+
+  socket.emit('taskStatusEditEnd',{
+    taskId:popoverModel.value.id,
+    status:statusNow
+  });
+  
 }
+
+//监听他人编辑事件
+onMounted(() => {
+  socket.on('taskStatusEditing',({taskId}) => {
+    if(taskId === popoverModel.value.id){
+      ElMessage(`任务 ${popoverModel.value.title} 正在被修改`)
+    }
+  });
+
+  socket.on('taskStatusEditEnd',({taskId,status}) => {
+    if((taskId === popoverModel.value.id)){
+      let taskStatus;
+      switch(status){
+        case '0':
+          taskStatus = '待开始';
+          break;
+        case '1':
+          taskStatus = '进行中';
+          break;
+        case '2':
+          taskStatus = '已完成';
+          break;
+      }
+      ElMessage({
+        message:`任务 ${popoverModel.value.title} 状态被成功修改为 "${taskStatus}"`
+      })
+
+      //根据广播信息修改样式
+      changeStatus(status);
+    }
+  })
+})
 </script>
 
 <style scoped>
