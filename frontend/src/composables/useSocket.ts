@@ -23,6 +23,7 @@ socket.on('disconnect', () => {
 })
 
 export function useSocket() {
+    socket.connect();
     onUnmounted(() => {
         socket.off('connect');
         socket.off('disconnect');

@@ -4,7 +4,12 @@ import { TaskService } from './task.service';
 import { Task } from './entities/task.entity';
 import { UserService } from 'src/user/user.service';
 
-@WebSocketGateway({ cors: true })
+@WebSocketGateway({
+  cors: {
+    origin: '*',  // 可以配置允许的源
+    methods: '*',
+  },
+})
 export class TaskGateway implements OnGatewayConnection {
   @WebSocketServer()
   server: Server;
@@ -26,6 +31,7 @@ export class TaskGateway implements OnGatewayConnection {
   //监听任务状态开始编辑
   @SubscribeMessage('taskStatusEditing')
   handleStatusEditing(client: Socket, payload: { taskId: String }) {
+    console.log(11111)
     //广播给其他用户（排除自己）
     client.broadcast.emit('taskStatusEditing', {
       taskId: payload.taskId

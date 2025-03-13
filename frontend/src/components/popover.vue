@@ -112,6 +112,7 @@ const startStatusEditing = () => {
   socket.emit('taskStatusEditing',{
     taskId:popoverModel.value.id,
   })
+  console.log("开始编辑任务状态时通知其他人")
 }
 
 //停止编辑时通知
@@ -133,12 +134,14 @@ const stopStatusEditing = (statusNow:String) => {
     taskId:popoverModel.value.id,
     status:statusNow
   });
+  console.log("停止编辑时通知");
   
 }
 
 //监听他人编辑事件
 onMounted(() => {
   socket.on('taskStatusEditing',({taskId}) => {
+    console.log(22222)
     if(taskId === popoverModel.value.id){
       ElMessage(`任务 ${popoverModel.value.title} 正在被修改`)
     }
@@ -159,7 +162,8 @@ onMounted(() => {
           break;
       }
       ElMessage({
-        message:`任务 ${popoverModel.value.title} 状态被成功修改为 "${taskStatus}"`
+        message:`任务 ${popoverModel.value.title} 状态被成功修改为 "${taskStatus}"`,
+        type:'success',
       })
 
       //根据广播信息修改样式

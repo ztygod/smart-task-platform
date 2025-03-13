@@ -4,6 +4,7 @@ import { DataSource } from 'typeorm';
 import { User } from './user/entities/user.entity';
 import { Task } from './task/entities/task.entity';
 import * as nodejieba from 'nodejieba';
+import { IoAdapter } from '@nestjs/platform-socket.io';
 
 // 初始化 DataSource
 const dataSource = new DataSource({
@@ -20,7 +21,7 @@ const dataSource = new DataSource({
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors();
-
+  app.useWebSocketAdapter(new IoAdapter(app));
   await dataSource.initialize();  // 确保 DataSource 初始化
   await app.listen(3000);
 }
