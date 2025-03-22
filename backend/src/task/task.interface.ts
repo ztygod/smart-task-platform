@@ -1,3 +1,5 @@
+import { UpdateTaskOrderDto } from "./dto/update-task-order.dto";
+
 export enum TaskStatus {
     Wait = '0',
     Doing = '1',
@@ -24,4 +26,8 @@ export interface TaskParseData {
 export interface TaskParseRo {
     success: boolean,
     data: TaskParseData
+}
+
+export interface TaskOrder {
+    item: UpdateTaskOrderDto
 }

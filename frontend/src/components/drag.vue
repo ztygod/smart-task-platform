@@ -32,6 +32,7 @@
         tag="ul"
         :list="dragData.list"
         v-bind="dragOptions"
+        @change="onDragChange"
       >
         <transition-group type="transition" name="flip-list">
           <li
@@ -77,12 +78,16 @@ import write from './write.vue';
 import { computed, onMounted, reactive } from 'vue';
 import { useTaskStore } from '../stores/taskStore';
 import type { TaskData } from '../types/base';
-//水水水水
+import { useSocket } from '../composables/useSocket';
+
+const {socket} = useSocket();
 const taskStore = useTaskStore();
 const dragData = reactive({
-  list: taskStore.tasks.map((item:TaskData, index) => {
-        return { item , order: index + 1 }
+  list: taskStore.tasks
+    .map((item:TaskData) => {
+        return { item , order: +item.order }
       })
+    .sort((a,b) =>  a.order - b.order)
 })
 const sort = () => {
       dragData.list = dragData.list.sort((a, b) => a.order - b.order)
@@ -95,8 +100,20 @@ const dragOptions = computed(() => {
         ghostClass: 'ghost',
       }
 })
+
+//实时同步拖拽给所有用户
+const onDragChange = () => {
+  let payload = (JSON.parse(JSON.stringify(dragData.list)) as TaskData[]).map(({ id },index) => ({ id, order:(index + 1) + '' }));
+  console.log(payload)
+  if(payload){
+    socket.emit('taskDrdg',payload);
+  }
+}
+
 onMounted(() => {
+  socket.on('taskDrdg',() => {
   
+  })
 });
 </script>
 

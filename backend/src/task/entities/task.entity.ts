@@ -5,6 +5,9 @@ export class Task {
     @PrimaryGeneratedColumn()  // 自动生成主键
     id: number;
 
+    @Column()// 排序字段
+    order: string;
+
     @Column()  // 定义 title 字段
     title: string;
 

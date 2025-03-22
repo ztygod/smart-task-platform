@@ -25,6 +25,7 @@ export interface TaskData {
     due_date: string,
     created_at: string,
     updated_at: string,
+    order: string
 }
 export enum TaskState {
     Wait = '0',

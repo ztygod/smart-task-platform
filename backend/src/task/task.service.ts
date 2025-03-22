@@ -11,6 +11,7 @@ import * as chrono from 'chrono-node';
 import * as natural from 'natural';
 import * as nodejieba from 'nodejieba';
 import { UpdateTaskDescDto } from './dto/update-task-desc.dto';
+import { UpdateTaskOrderDto } from './dto/update-task-order.dto';
 
 @Injectable()
 export class TaskService {
@@ -38,6 +39,15 @@ export class TaskService {
     taskInstance.due_date = createTaskDto.due_date;
     taskInstance.created_at = new Date();
     taskInstance.updated_at = new Date();
+
+    //查询task表中最大的order的值
+    const maxOrderResult = await this.taskRepository
+      .createQueryBuilder('task')
+      .select('MAX(task.order)', 'max')
+      .getRawOne();
+
+    const newOrder = (maxOrderResult.max ?? 0) + 1;
+    taskInstance.order = newOrder;
 
     return await this.storeToDB(taskInstance);
   }
@@ -136,6 +146,19 @@ export class TaskService {
     }
 
     task.description = description;
+    return this.taskRepository.save(task);
+  }
+
+  //更新任务顺序，逻辑与上面一致
+  async updateOrder(updateOrder: UpdateTaskOrderDto): Promise<Task> {
+    const { id, order } = updateOrder;
+    const task = await this.findOne(+id);
+
+    if (!task) {
+      throw new NotFoundException(`ID 为 ${id} 的任务不存在`);
+    }
+
+    task.order = order;
     return this.taskRepository.save(task);
   }
 
