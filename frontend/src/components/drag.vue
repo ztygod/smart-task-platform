@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="main">
-      <button class="btn btn-blue" @click="sort">To original order</button>
+      <button class="btn btn-blue" >To original order</button>
       <div class="header">
         <div class="text text1">
           Task
@@ -38,7 +38,7 @@
           <li
             class="list-group-item"
             v-for="element in dragData.list"
-            :key="element.order"
+            :key="element.item.order"
           >
         <div class="text-content text-content-1">
           {{element.item.title}}
@@ -85,13 +85,11 @@ const taskStore = useTaskStore();
 const dragData = reactive({
   list: taskStore.tasks
     .map((item:TaskData) => {
-        return { item , order: +item.order }
+        return { item }
       })
-    .sort((a,b) =>  a.order - b.order)
+    .sort((a,b) =>  +a.item.order - +b.item.order)
 })
-const sort = () => {
-      dragData.list = dragData.list.sort((a, b) => a.order - b.order)
-}
+
 const dragOptions = computed(() => {
       return {
         animation: 0,
@@ -103,16 +101,22 @@ const dragOptions = computed(() => {
 
 //实时同步拖拽给所有用户
 const onDragChange = () => {
-  let payload = (JSON.parse(JSON.stringify(dragData.list)) as TaskData[]).map(({ id },index) => ({ id, order:(index + 1) + '' }));
+  const deepCopiedList: { item: TaskData }[] = JSON.parse(JSON.stringify(dragData.list));
+  const payload = deepCopiedList.map(({ item }, index) => ({
+  id: String(item.id),
+  order: String(index + 1),
+}));
   console.log(payload)
   if(payload){
-    socket.emit('taskDrdg',payload);
+    socket.emit('taskDragUpdate',payload);
   }
 }
 
 onMounted(() => {
-  socket.on('taskDrdg',() => {
-  
+  socket.on('taskDragUpdate',() => {
+    taskStore.fetchTask().then(() => {
+      console.log('success')
+    });
   })
 });
 </script>

@@ -4,6 +4,7 @@ import { TaskService } from './task.service';
 import { Task } from './entities/task.entity';
 import { UserService } from 'src/user/user.service';
 import { TaskOrder } from './task.interface';
+import { UpdateTaskOrderDto } from './dto/update-task-order.dto';
 
 @WebSocketGateway({
   cors: {
@@ -51,10 +52,11 @@ export class TaskGateway implements OnGatewayConnection {
 
   //监听任务拖拽
   @SubscribeMessage('taskDragUpdate')
-  handleTaskDrag(client: Socket, payload: TaskOrder[]) {
+  handleTaskDrag(client: Socket, payload: UpdateTaskOrderDto[]) {
     console.log('监听任务拖拽');
+    console.log(payload)
     //更新数据库数据
-    const updateOrder = payload.map((value, index) => this.taskService.updateOrder(value.item));
+    const updateOrder = payload.map((value) => this.taskService.updateOrder(value));
     Promise.all(updateOrder)
       .then(() => {
         console.log('success')
