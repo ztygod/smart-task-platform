@@ -33,6 +33,7 @@
         :list="dragData.list"
         v-bind="dragOptions"
         @change="onDragChange"
+        :animation="200"
       >
         <transition-group type="transition" name="flip-list">
           <li
@@ -75,7 +76,7 @@
 import { VueDraggableNext } from 'vue-draggable-next';
 import popover from './popover.vue';
 import write from './write.vue';
-import { computed, onMounted, reactive } from 'vue';
+import { computed, nextTick, onMounted, reactive } from 'vue';
 import { useTaskStore } from '../stores/taskStore';
 import type { TaskData } from '../types/base';
 import { useSocket } from '../composables/useSocket';
@@ -113,10 +114,11 @@ const onDragChange = () => {
 }
 
 onMounted(() => {
-  socket.on('taskDragUpdate',() => {
-    taskStore.fetchTask().then(() => {
-      console.log('success')
-    });
+  socket.on('taskDragUpdate',async () => {
+    console.log('taskDragUpdate')
+    await taskStore.fetchTask()
+    window.location.reload()
+
   })
 });
 </script>

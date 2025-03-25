@@ -52,22 +52,14 @@ export class TaskGateway implements OnGatewayConnection {
 
   //监听任务拖拽
   @SubscribeMessage('taskDragUpdate')
-  handleTaskDrag(client: Socket, payload: UpdateTaskOrderDto[]) {
+  async handleTaskDrag(client: Socket, payload: UpdateTaskOrderDto[]) {
     console.log('监听任务拖拽');
     console.log(payload)
     //更新数据库数据
     const updateOrder = payload.map((value) => this.taskService.updateOrder(value));
-    Promise.all(updateOrder)
-      .then(() => {
-        console.log('success')
-      })
-      .catch((err) => {
-        console.log('err', err)
-      })
-    //向其他用户广播
-    client.broadcast.emit('taskDragUpdate', {
-
-    })
-
+    let newOrderTask = await Promise.all(updateOrder);
+    console.log(newOrderTask)
+    //向所有用户广播
+    this.server.emit('taskDragUpdate')
   }
 }
