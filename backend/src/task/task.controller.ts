@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ConflictException, HttpException, HttpStatus } from '@nestjs/common';
 import { TaskService } from './task.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
@@ -31,7 +31,14 @@ export class TaskController {
 
   @Patch('update/status')
   updateStatus(@Body() updateTaskStatusDto: UpdateTaskStatusDto) {
-    return this.taskService.updateStatus(updateTaskStatusDto);
+    try {
+      return this.taskService.updateStatus(updateTaskStatusDto);
+    } catch (error) {
+      if (error instanceof ConflictException) {
+        throw new HttpException(error.getResponse(), HttpStatus.CONFLICT);
+      }
+      throw error;
+    }
   }
 
   @Patch('update/description')

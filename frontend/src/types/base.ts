@@ -25,7 +25,8 @@ export interface TaskData {
     due_date: string,
     created_at: string,
     updated_at: string,
-    order: string
+    order: string,
+    version: string,
 }
 export enum TaskState {
     Wait = '0',
@@ -36,6 +37,7 @@ export enum TaskState {
 export interface UpdateTaskStatus {
     id: string,
     status: string,
+    version: string,
 }
 
 export interface UpdateTaskDescription {

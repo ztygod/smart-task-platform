@@ -43,9 +43,11 @@ import { HTTPMethod, TaskState, type TaskData } from '../types/base'
 import task from '../apis/task';
 import { useSocket } from '../composables/useSocket';
 import { ElMessage } from 'element-plus';
+import { useTaskStore } from '../stores/taskStore';
 
 const visible = ref(false)
 const {socket} = useSocket();
+const taskStore = useTaskStore()
 const popoverData = reactive({
     state: '待开始',
     style: [] as any,
@@ -59,7 +61,8 @@ let popoverModel = defineModel<TaskData>({
       due_date: '2025-3-10',
       created_at: '2025-3-10',
       updated_at: '2025-3-10',
-      order:'9999'
+      order:'9999',
+      version:'9999'
     })
 });
 
@@ -127,7 +130,8 @@ const stopStatusEditing = (statusNow:String) => {
     HTTPMethod.PATCH,
     {
       id:popoverModel.value.id,
-      status:popoverModel.value.status
+      status:popoverModel.value.status,
+      version:popoverModel.value.version,
     }
   ).then(() => {})
 
@@ -148,7 +152,7 @@ onMounted(() => {
     }
   });
 
-  socket.on('taskStatusEditEnd',({taskId,status}) => {
+  socket.on('taskStatusEditEnd',async ({taskId,status}) => {
     if((taskId === popoverModel.value.id)){
       let taskStatus;
       switch(status){
@@ -166,9 +170,11 @@ onMounted(() => {
         message:`任务 ${popoverModel.value.title} 状态被成功修改为 "${taskStatus}"`,
         type:'success',
       })
-
       //根据广播信息修改样式
       changeStatus(status);
+
+      //同时获取最新task数据（更新version）
+      await taskStore.fetchTask();
     }
   })
 })

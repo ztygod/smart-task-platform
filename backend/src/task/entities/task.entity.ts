@@ -25,4 +25,7 @@ export class Task {
 
     @UpdateDateColumn()  // 自动更新为当前时间
     updated_at: Date;
+
+    @Column() // 定义版本用作乐观锁，防止多人同时修改导致冲突
+    version: string
 }

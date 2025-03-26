@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -125,14 +125,23 @@ export class TaskService {
 
   //更新任务状态
   async updateStatus(updateTaskStatusDto: UpdateTaskStatusDto): Promise<Task> {
-    const { id, status } = updateTaskStatusDto;
+    const { id, status, version } = updateTaskStatusDto;
     const task = await this.findOne(+id);
 
     if (!task) {
       throw new NotFoundException(`ID 为 ${id} 的任务不存在`);
     }
 
+    if (task.version !== version) {
+      throw new ConflictException({
+        code: 'VERSION_MISMATCH',
+        message: '任务已被其他人修改',
+        lastestData: task
+      })
+    }
+
     task.status = status;
+    task.version = version + 1;
     return this.taskRepository.save(task);
   }
 
