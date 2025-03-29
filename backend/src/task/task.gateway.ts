@@ -5,6 +5,7 @@ import { Task } from './entities/task.entity';
 import { UserService } from 'src/user/user.service';
 import { TaskOrder } from './task.interface';
 import { UpdateTaskOrderDto } from './dto/update-task-order.dto';
+import { HttpException } from '@nestjs/common';
 
 @WebSocketGateway({
   cors: {
@@ -65,8 +66,38 @@ export class TaskGateway implements OnGatewayConnection {
     });
   }
 
-  @SubscribeMessage('onDescriptionFocus ')
-  async handleStartEditing(client: Socket, payload: { taskId: number, user: string }) {
+  @SubscribeMessage('onDescriptionFocus')
+  async handleStartEditing(client: Socket, payload: { taskId: number, username: string, id: string }) {
+    console.log(`${payload.username}开始编辑,信息${payload}`);
+    // 查询用户是否存在
+    let user = await this.userService.findById(+payload.id);
+    if (!user) {
+      const errors = { User: ' not found' };
+      throw new HttpException({ errors }, 401);
+    }
 
+    //向除了自己以外的用户进行广播
+    client.broadcast.emit('onDescriptionFocus', {
+      taskId: payload.id,
+      username: payload.username,
+      id: payload.id
+    })
+  }
+
+  @SubscribeMessage('onDescriptionBlur')
+  async handleEndEditing(client: Socket, payload: { taskId: number, username: string, id: string }) {
+    console.log(`${payload.username}结束编辑消息,信息${payload}`);
+    // 查询用户是否存在
+    let user = await this.userService.findById(+payload.id);
+    if (!user) {
+      const errors = { User: ' not found' };
+      throw new HttpException({ errors }, 401);
+    }
+    //向除了自己以外的用户进行广播
+    client.broadcast.emit('onDescriptionFocus', {
+      taskId: payload.id,
+      username: payload.username,
+      id: payload.id
+    })
   }
 }

@@ -11,6 +11,11 @@ export default interface UserLogin {
     password: string,
 }
 
+export interface UserStorage {
+    username: string,
+    id: string,
+}
+
 export interface TaskCreate {
     title: string,
     state: string,

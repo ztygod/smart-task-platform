@@ -66,7 +66,7 @@ import { reactive } from 'vue';
 import { h } from 'vue';
 import { ElNotification } from 'element-plus';
 import user from '../apis/user';
-import { HTTPMethod } from '../types/base';
+import { HTTPMethod, type UserStorage } from '../types/base';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
@@ -87,8 +87,12 @@ const handleLogin = async () => {
             }
         );
         const token = response.data.user.token;
+        const username:string = response.data.user.username;
+        const id:string = response.data.user.id;
+        const userMessage:UserStorage = {username:username,id:id };
+
         localStorage.setItem('authToken', token);
-        localStorage.setItem('userInfo',pageData.username);
+        localStorage.setItem('userInfo',JSON.stringify(userMessage));
 
         ElNotification({
             title: '欢迎回来',

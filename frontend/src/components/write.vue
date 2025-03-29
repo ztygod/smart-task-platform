@@ -1,7 +1,7 @@
 <template>
   <el-input
     class="input"
-    v-model="writeModel.description"
+    v-model="inputText"
     style="width: 650px"
     :disabled
     placeholder=""
@@ -13,7 +13,7 @@
 
 <script lang="ts" setup>
 import { computed, onMounted, ref } from 'vue'
-import { HTTPMethod, type TaskData } from '../types/base';
+import { HTTPMethod, type TaskData, type UserStorage } from '../types/base';
 import task from '../apis/task';
 import { useSocket } from '../composables/useSocket';
 
@@ -33,11 +33,32 @@ const writeModel = defineModel<TaskData>({
 })
 const disabled = ref(true);
 
-const userInfo = computed(() => {
-  localStorage.getItem('userInfo')
+const userInfo = computed<UserStorage>(() => {
+  let userMessage = localStorage.getItem('userInfo');
+  if(userMessage){
+    let parseUserMessage = JSON.parse(userMessage);
+    return {
+      username:parseUserMessage.username,
+      id:parseUserMessage.id,
+    }
+  }
+  return { username: '', id: 0 };
 })
+
+const inputText = computed(() => {
+  return `${writeModel.value.description}`
+})
+
 const updateDescription = () => {
   disabled.value = !disabled.value;
+
+  if (disabled.value){
+    //disable为true时，则说明开始编辑，向后端网关发送消息
+    onDescriptionFocus()
+  }else {
+    //disable为false时，则说明结束编辑，向后端网关发送消息
+    onDescriptionBlur()
+  }
 
   //向后端发起更新任务描述的请求
   if(disabled.value !== false){
@@ -56,23 +77,25 @@ const updateDescription = () => {
 const onDescriptionFocus = () => {
   socket.emit('onDescriptionFocus ',{
     taskId: writeModel.value.id,
-    user: userInfo
+    user: userInfo.value.username,
+    id: userInfo.value.id
   })
 }
 
 const onDescriptionBlur = () => {
   socket.emit('onDescriptionBlur',{
     taskId: writeModel.value.id,
-    user: userInfo
+    user: userInfo.value.username,
+    id: userInfo.value.id
   })
 }
 
 onMounted(() => {
-  socket.on('onDescriptionFocus',() => {
+  socket.on('onDescriptionFocus',( { taskId, username, id}) => {
 
   });
 
-  socket.on('onDescriptionBlur',() => {
+  socket.on('onDescriptionBlur',( { taskId, username, id}) => {
 
   })
 })

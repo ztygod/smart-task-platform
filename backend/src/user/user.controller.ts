@@ -35,7 +35,7 @@ export class UserController {
     return this.userService.remove(+id);
   }
   @Post('login')
-  async login(@Body() loginUserDto: LoginUserDto): Promise<UserRO> {
+  async login(@Body() loginUserDto: LoginUserDto) {
     const _user = await this.userService.findOne(loginUserDto);
 
     const error = { user: 'not found' };
@@ -44,8 +44,8 @@ export class UserController {
     }
 
     const token = this.userService.generateJWT(_user);
-    const { username } = _user;
-    const user = { username, token };
+    const { username, id } = _user;
+    const user = { username, token, id };
     return { user }
   }
 }
