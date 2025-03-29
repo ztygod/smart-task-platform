@@ -84,6 +84,19 @@ export class UserService {
     return this.buildUserRO(user)
   }
 
+  async findByName(name: string): Promise<UserRO> {
+    const user = await this.userRepository.findOne({
+      where: { name }
+    });
+
+    if (!user) {
+      const errors = { User: ' not found' };
+      throw new HttpException({ errors }, 401);
+    }
+
+    return this.buildUserRO(user)
+  }
+
   update(id: number, updateUserDto: UpdateUserDto) {
     return `This action updates a #${id} user`;
   }

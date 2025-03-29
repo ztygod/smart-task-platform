@@ -60,6 +60,13 @@ export class TaskGateway implements OnGatewayConnection {
     let newOrderTask = await Promise.all(updateOrder);
     console.log(newOrderTask)
     //向所有用户广播
-    this.server.emit('taskDragUpdate')
+    client.broadcast.emit('taskDragUpdate', {
+      status: 'success'
+    });
+  }
+
+  @SubscribeMessage('onDescriptionFocus ')
+  async handleStartEditing(client: Socket, payload: { taskId: number, user: string }) {
+
   }
 }

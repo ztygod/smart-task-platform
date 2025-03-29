@@ -114,8 +114,8 @@ const onDragChange = () => {
 }
 
 onMounted(() => {
-  socket.on('taskDragUpdate',async () => {
-    console.log('taskDragUpdate')
+  socket.on('taskDragUpdate',async ({status}) => {
+    console.log('taskDragUpdate',status)
     await taskStore.fetchTask()
     window.location.reload()
 

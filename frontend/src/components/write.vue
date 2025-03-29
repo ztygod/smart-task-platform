@@ -12,12 +12,12 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { HTTPMethod, type TaskData } from '../types/base';
 import task from '../apis/task';
 import { useSocket } from '../composables/useSocket';
 
-//const {socket,isConnected} = useSocket()
+const {socket} = useSocket()
 const writeModel = defineModel<TaskData>({
   default:() => ({
       id: '1',
@@ -27,10 +27,15 @@ const writeModel = defineModel<TaskData>({
       due_date: '2025-3-10',
       created_at: '2025-3-10',
       updated_at: '2025-3-10',
-      order:'9999'
+      order:'9999',
+      version:'9999',
     })
 })
 const disabled = ref(true);
+
+const userInfo = computed(() => {
+  localStorage.getItem('userInfo')
+})
 const updateDescription = () => {
   disabled.value = !disabled.value;
 
@@ -47,33 +52,30 @@ const updateDescription = () => {
   }
 }
 
-// //开始编辑的时候通知其他人
-// const startEditing = () => {
-//   socket.emit('taskEditing',{
-//     taskId:writeModel.value.id,
-//     userId:,
-//     userName:
-//   })
-// }
+// 前端开始编辑时发送事件
+const onDescriptionFocus = () => {
+  socket.emit('onDescriptionFocus ',{
+    taskId: writeModel.value.id,
+    user: userInfo
+  })
+}
 
-// //停止编辑时通知
-// const stopEditing = async () => {
-//   socket.emit('taskEditEnd',{
-//     tasId:writeModel.value.id
-//   })
+const onDescriptionBlur = () => {
+  socket.emit('onDescriptionBlur',{
+    taskId: writeModel.value.id,
+    user: userInfo
+  })
+}
 
-//   //保存修改到后端
-// }
+onMounted(() => {
+  socket.on('onDescriptionFocus',() => {
 
-// onMounted(() => {
-//   socket.on('taskEditing',({taskId,user} => {
+  });
 
-//   })
+  socket.on('onDescriptionBlur',() => {
 
-//   socket.on('taskEditEnd',({taskId}) => {
-    
-//   })
-// })
+  })
+})
 </script>
 
 <style scoped>

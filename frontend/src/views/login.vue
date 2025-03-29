@@ -88,6 +88,7 @@ const handleLogin = async () => {
         );
         const token = response.data.user.token;
         localStorage.setItem('authToken', token);
+        localStorage.setItem('userInfo',pageData.username);
 
         ElNotification({
             title: '欢迎回来',
