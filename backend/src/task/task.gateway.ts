@@ -6,7 +6,7 @@ import { UserService } from 'src/user/user.service';
 import { TaskOrder } from './task.interface';
 import { UpdateTaskOrderDto } from './dto/update-task-order.dto';
 import { HttpException } from '@nestjs/common';
-
+import * as OT from 'ot';
 @WebSocketGateway({
   cors: {
     origin: '*',  // 可以配置允许的源
@@ -16,6 +16,7 @@ import { HttpException } from '@nestjs/common';
 export class TaskGateway implements OnGatewayConnection {
   @WebSocketServer()
   server: Server;
+  private otServer = new Map<number, OT.Server>();// taskId -> OTServer（每个任务的 OT 状态）
 
   constructor(
     private readonly taskService: TaskService,
@@ -67,7 +68,7 @@ export class TaskGateway implements OnGatewayConnection {
   }
 
   @SubscribeMessage('onDescriptionFocus')
-  async handleStartEditing(client: Socket, payload: { taskId: number, username: string, id: string }) {
+  async handleStartEditing(client: Socket, payload: { taskTitle: string, taskId: number, username: string, id: string }) {
     console.log(`${payload.username}开始编辑,信息${payload}`);
     // 查询用户是否存在
     let user = await this.userService.findById(+payload.id);
@@ -78,6 +79,7 @@ export class TaskGateway implements OnGatewayConnection {
 
     //向除了自己以外的用户进行广播
     client.broadcast.emit('onDescriptionFocus', {
+      taskTitle: payload.taskTitle,
       taskId: payload.id,
       username: payload.username,
       id: payload.id
@@ -85,7 +87,7 @@ export class TaskGateway implements OnGatewayConnection {
   }
 
   @SubscribeMessage('onDescriptionBlur')
-  async handleEndEditing(client: Socket, payload: { taskId: number, username: string, id: string }) {
+  async handleEndEditing(client: Socket, payload: { taskTitle: string, taskId: number, username: string, id: string }) {
     console.log(`${payload.username}结束编辑消息,信息${payload}`);
     // 查询用户是否存在
     let user = await this.userService.findById(+payload.id);
@@ -95,9 +97,33 @@ export class TaskGateway implements OnGatewayConnection {
     }
     //向除了自己以外的用户进行广播
     client.broadcast.emit('onDescriptionFocus', {
+      taskTitle: payload.taskTitle,
       taskId: payload.id,
       username: payload.username,
       id: payload.id
     })
+  }
+
+  // 监听客户端的OT操作
+  @SubscribeMessage('otOperation')
+  handleOTOperation(client: Socket, payload: { taskId: string, operation: any }) {
+    console.log('协同编辑');
+    const { taskId, operation } = payload;
+    const otServer = this.getOrCreateOTServer(+taskId);
+
+    //将接收到的操作转换为其他可以处理的格式
+    const transformedOperation = otServer.receiveOperation(0, operation);
+
+    // 广播给其他用户
+    client.broadcast.emit('otOperation', transformedOperation);
+  }
+
+  // 获取或创建OT服务
+  private getOrCreateOTServer(taskId: number): OT.Server {
+    if (!this.otServer.has(taskId)) {
+      // 创建新的任务
+      this.otServer.set(taskId, new OT.Server(''));
+    }
+    return this.otServer.get(taskId);
   }
 }

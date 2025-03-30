@@ -10,8 +10,12 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
+    "@types/diff-match-patch": "^1.0.36",
+    "@types/ot": "^0.0.8",
     "axios": "^1.7.9",
+    "diff-match-patch": "^1.0.5",
     "element-plus": "^2.9.4",
+    "ot": "^0.0.15",
     "pinia": "^3.0.1",
     "pinia-plugin-persistedstate": "^4.2.0",
     "socket.io-client": "^4.8.1",

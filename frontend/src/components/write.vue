@@ -1,10 +1,11 @@
 <template>
   <el-input
     class="input"
-    v-model="inputText"
+    v-model="writeModel.description"
     style="width: 650px"
     :disabled
     placeholder=""
+    @input="handleTextChange"
   />
   <el-button @click="updateDescription" class="btn">
     {{ disabled ? '编辑' : '完成' }}
@@ -16,6 +17,10 @@ import { computed, onMounted, ref } from 'vue'
 import { HTTPMethod, type TaskData, type UserStorage } from '../types/base';
 import task from '../apis/task';
 import { useSocket } from '../composables/useSocket';
+import { ElMessage } from 'element-plus'
+import { Client,TextOperation } from 'ot';
+import { debounce } from '../utils';
+import { diff_match_patch } from 'diff-match-patch';
 
 const {socket} = useSocket()
 const writeModel = defineModel<TaskData>({
@@ -32,6 +37,10 @@ const writeModel = defineModel<TaskData>({
     })
 })
 const disabled = ref(true);
+const documentContent = ref(writeModel.value.description); // 手动存储文档内容
+const dmp = new diff_match_patch() //创建diff实例
+//初始化OT客户端
+const otClient = new Client(0);
 
 const userInfo = computed<UserStorage>(() => {
   let userMessage = localStorage.getItem('userInfo');
@@ -76,6 +85,7 @@ const updateDescription = () => {
 // 前端开始编辑时发送事件
 const onDescriptionFocus = () => {
   socket.emit('onDescriptionFocus ',{
+    taskTitle: writeModel.value.title,
     taskId: writeModel.value.id,
     user: userInfo.value.username,
     id: userInfo.value.id
@@ -84,19 +94,69 @@ const onDescriptionFocus = () => {
 
 const onDescriptionBlur = () => {
   socket.emit('onDescriptionBlur',{
+    taskTitle: writeModel.value.title,
     taskId: writeModel.value.id,
     user: userInfo.value.username,
     id: userInfo.value.id
   })
 }
 
-onMounted(() => {
-  socket.on('onDescriptionFocus',( { taskId, username, id}) => {
+//计算本地变更
+const handleTextChange = () => {
+  const newContent = writeModel.value.description;
+  const oldContent = documentContent.value;
 
+  //计算文本差异
+  const diffs = dmp.diff_main(oldContent,newContent);
+  dmp.diff_cleanupSemantic(diffs); // 优化diff结果
+
+  // 构造OT操作
+  const delta = new TextOperation();
+  let cursor = 0;
+
+  diffs.forEach(([type,text]) => {
+    if(type === 0) {//保留
+      delta.retain(text.length);
+    }else if(type === -1) { // 删除
+      delta.delete(text.length);
+    }else if(type === 1) { // 插入
+      delta.insert(text);
+    }
   });
 
-  socket.on('onDescriptionBlur',( { taskId, username, id}) => {
+  documentContent.value = newContent;
 
+  //应用本地变更
+  otClient.applyClient(delta);
+  emitOperation(delta);
+}
+
+//防抖发送 OT 变更（减少 WebSocket 负载）
+const emitOperation = debounce((delta) => {
+  socket.emit('otOperation',{
+    taskId:writeModel.value.id,
+    operation: delta.toJSon()
+  })
+},500)
+
+onMounted(() => {
+  socket.on('onDescriptionFocus',( {taskTitle, taskId, username, id}) => {
+    ElMessage({
+        message:`ID:${taskId} 任务 ${taskTitle}的内容正在被用户${username}修改"`,
+        type:'success',
+      })
+  });
+
+  socket.on('onDescriptionBlur',( {taskTitle, taskId, username, id}) => {
+    ElMessage({
+        message:`用户${username}已完成 修改ID:${taskId} 任务 ${taskTitle}的描述"`, 
+      })
+  });
+
+  socket.on('otOperation',(operation) => {
+    const op = TextOperation.fromJSON(operation);//转换OT操作
+    otClient.applyServer(op);
+    writeModel.value.description = op.apply(writeModel.value.description);//应用远程变更
   })
 })
 </script>
