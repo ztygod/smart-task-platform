@@ -18,7 +18,7 @@ import { HTTPMethod, type TaskData, type UserStorage } from '../types/base';
 import task from '../apis/task';
 import { useSocket } from '../composables/useSocket';
 import { ElMessage } from 'element-plus'
-import { Client,TextOperation } from 'ot';
+import { Client,TextOperation } from 'ot/lib/client';
 import { debounce } from '../utils';
 import { diff_match_patch } from 'diff-match-patch';
 
