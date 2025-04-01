@@ -29,9 +29,6 @@ importers:
       '@nestjs/websockets':
         specifier: ^11.0.11
         version: 11.0.11(@nestjs/common@10.4.15(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.15)(@nestjs/platform-socket.io@11.0.11)(reflect-metadata@0.2.2)(rxjs@7.8.1)
-      '@types/ot':
-        specifier: ^0.0.8
-        version: 0.0.8
       argon2:
         specifier: ^0.41.1
         version: 0.41.1
@@ -56,9 +53,6 @@ importers:
       nodejieba:
         specifier: ^3.4.4
         version: 3.4.4
-      ot:
-        specifier: ^0.0.15
-        version: 0.0.15
       pg:
         specifier: ^8.13.3
         version: 8.13.3
@@ -706,9 +700,6 @@ packages:
   '@types/estree@1.0.6':
     resolution: {integrity: sha512-AYnb1nQyY49te+VRAVgmzfcgjYS91mY5P0TKUDCLEM+gNnA+3T6rWITXRLYCpahpqSQbN5cE+gHpnPyXjHWxcw==}
 
-  '@types/events@3.0.3':
-    resolution: {integrity: sha512-trOc4AAUThEz9hapPtSd7wf5tiQKvTtu5b371UxXdTuqzIh0ArcRspRP0i0Viu+LXstIQ1z96t1nsPxT9ol01g==}
-
   '@types/express-serve-static-core@4.19.6':
     resolution: {integrity: sha512-N4LZ2xG7DatVqhCZzOGb1Yi5lMbXSZcmdLDe9EzSndPV2HpWYWzRbaerl2n27irrm94EPpprqa8KpskPT085+A==}
 
@@ -744,9 +735,6 @@ packages:
 
   '@types/node@20.17.19':
     resolution: {integrity: sha512-LEwC7o1ifqg/6r2gn9Dns0f1rhK+fPFDoMiceTJ6kWmVk6bgXBI/9IOWfVan4WiAavK9pIVWdX0/e3J+eEUh5A==}
-
-  '@types/ot@0.0.8':
-    resolution: {integrity: sha512-sLOqWml275CmBMOl5j+q0ltQj0gwaa44noXuX5fEMUvJYDGU4FTVTsTl6X7cVNokjnT+d/O+/ugzpspGMvwROg==}
 
   '@types/qs@6.9.18':
     resolution: {integrity: sha512-kK7dgTYDyGqS+e2Q4aK9X3D7q234CIZ1Bv0q/7Z5IwRDoADNU81xXJK/YVyLbLTZCoIwUoDoffFeF+p/eIklAA==}
@@ -2639,9 +2627,6 @@ packages:
     resolution: {integrity: sha512-D2FR03Vir7FIu45XBY20mTb+/ZSWB00sjU9jdQXt83gDrI4Ztz5Fs7/yy74g2N5SVQY4xY1qDr4rNddwYRVX0g==}
     engines: {node: '>=0.10.0'}
 
-  ot@0.0.15:
-    resolution: {integrity: sha512-Bl7YcrV+R+UPPi1cWocHH8oUh1qaYEZdzRep5PpXesfN62PUrez92m17Za5+E1SWgtIx7SsvcH5yLliWEKhcCA==}
-
   p-limit@2.3.0:
     resolution: {integrity: sha512-//88mFWSJx8lxCzwdAABTJL2MyWB12+eIY7MDL2SqLmAkeKU9qxRvWuSyTjm3FUmpBEMuFfckAIqEaVGUDxb6w==}
     engines: {node: '>=6'}
@@ -4340,8 +4325,6 @@ snapshots:
 
   '@types/estree@1.0.6': {}
 
-  '@types/events@3.0.3': {}
-
   '@types/express-serve-static-core@4.19.6':
     dependencies:
       '@types/node': 20.17.19
@@ -4386,10 +4369,6 @@ snapshots:
   '@types/node@20.17.19':
     dependencies:
       undici-types: 6.19.8
-
-  '@types/ot@0.0.8':
-    dependencies:
-      '@types/events': 3.0.3
 
   '@types/qs@6.9.18': {}
 
@@ -6601,8 +6580,6 @@ snapshots:
       wcwidth: 1.0.1
 
   os-tmpdir@1.0.2: {}
-
-  ot@0.0.15: {}
 
   p-limit@2.3.0:
     dependencies:

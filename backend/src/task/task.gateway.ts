@@ -6,7 +6,6 @@ import { UserService } from 'src/user/user.service';
 import { TaskOrder } from './task.interface';
 import { UpdateTaskOrderDto } from './dto/update-task-order.dto';
 import { HttpException } from '@nestjs/common';
-import * as OT from 'ot';
 @WebSocketGateway({
   cors: {
     origin: '*',  // 可以配置允许的源
@@ -16,8 +15,6 @@ import * as OT from 'ot';
 export class TaskGateway implements OnGatewayConnection {
   @WebSocketServer()
   server: Server;
-  private otServer = new Map<number, OT.Server>();// taskId -> OTServer（每个任务的 OT 状态）
-
   constructor(
     private readonly taskService: TaskService,
     private readonly userService: UserService
@@ -109,21 +106,5 @@ export class TaskGateway implements OnGatewayConnection {
   handleOTOperation(client: Socket, payload: { taskId: string, operation: any }) {
     console.log('协同编辑');
     const { taskId, operation } = payload;
-    const otServer = this.getOrCreateOTServer(+taskId);
-
-    //将接收到的操作转换为其他可以处理的格式
-    const transformedOperation = otServer.receiveOperation(0, operation);
-
-    // 广播给其他用户
-    client.broadcast.emit('otOperation', transformedOperation);
-  }
-
-  // 获取或创建OT服务
-  private getOrCreateOTServer(taskId: number): OT.Server {
-    if (!this.otServer.has(taskId)) {
-      // 创建新的任务
-      this.otServer.set(taskId, new OT.Server(''));
-    }
-    return this.otServer.get(taskId);
   }
 }

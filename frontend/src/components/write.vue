@@ -18,9 +18,7 @@ import { HTTPMethod, type TaskData, type UserStorage } from '../types/base';
 import task from '../apis/task';
 import { useSocket } from '../composables/useSocket';
 import { ElMessage } from 'element-plus'
-import { Client,TextOperation } from 'ot/lib/client';
 import { debounce } from '../utils';
-import { diff_match_patch } from 'diff-match-patch';
 
 const {socket} = useSocket()
 const writeModel = defineModel<TaskData>({
@@ -38,9 +36,6 @@ const writeModel = defineModel<TaskData>({
 })
 const disabled = ref(true);
 const documentContent = ref(writeModel.value.description); // 手动存储文档内容
-const dmp = new diff_match_patch() //创建diff实例
-//初始化OT客户端
-const otClient = new Client(0);
 
 const userInfo = computed<UserStorage>(() => {
   let userMessage = localStorage.getItem('userInfo');
@@ -103,32 +98,7 @@ const onDescriptionBlur = () => {
 
 //计算本地变更
 const handleTextChange = () => {
-  const newContent = writeModel.value.description;
-  const oldContent = documentContent.value;
 
-  //计算文本差异
-  const diffs = dmp.diff_main(oldContent,newContent);
-  dmp.diff_cleanupSemantic(diffs); // 优化diff结果
-
-  // 构造OT操作
-  const delta = new TextOperation();
-  let cursor = 0;
-
-  diffs.forEach(([type,text]) => {
-    if(type === 0) {//保留
-      delta.retain(text.length);
-    }else if(type === -1) { // 删除
-      delta.delete(text.length);
-    }else if(type === 1) { // 插入
-      delta.insert(text);
-    }
-  });
-
-  documentContent.value = newContent;
-
-  //应用本地变更
-  otClient.applyClient(delta);
-  emitOperation(delta);
 }
 
 //防抖发送 OT 变更（减少 WebSocket 负载）
@@ -154,9 +124,7 @@ onMounted(() => {
   });
 
   socket.on('otOperation',(operation) => {
-    const op = TextOperation.fromJSON(operation);//转换OT操作
-    otClient.applyServer(op);
-    writeModel.value.description = op.apply(writeModel.value.description);//应用远程变更
+   
   })
 })
 </script>
