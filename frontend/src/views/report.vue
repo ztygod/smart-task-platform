@@ -6,21 +6,36 @@
       <draggable
         id="first"
         data-source="juju"
-        :list="list"
+        :list="pageData.list"
         class="list-group"
         group="a"
         item-key="name"
+        :style="paddingStyleOne"
       >
-        <template #item="{ element }">
-          <div class="list-group-item">
-            {{ element.name }}
+        <template #header>
+          <div
+            class="list-group-title"
+            role="group"
+            aria-label="Basic example"
+          >
+            <div class="task-index"></div>
+            <div class="task-name">Task</div>
+            <div class="task-status">Status</div>
+            <div class="task-create-date">Cerate Date</div>
+            <div class="task-due-date">Due Date</div>
+            <div class="task-desc">Text</div>
           </div>
         </template>
-
-        <template #footer>
-          <div class="btn-group list-group-item" role="group">
-            <button class="btn btn-secondary" @click="add">Add</button>
-            <button class="btn btn-secondary" @click="replace">Replace</button>
+        <template #item="{ element }">
+          <div class="list-group-item item">
+            <div class="task-index"></div>
+            <div class="task-name">{{ element.name }}</div>
+            <div class="task-status">Status</div>
+            <div class="task-create-date">
+              <Date class="date"></Date>
+            </div>
+            <div class="task-due-date">Due Date</div>
+            <div class="task-desc">Text</div>
           </div>
         </template>
       </draggable>
@@ -29,7 +44,12 @@
     <div class="col-4">
       <h3>Second draggable with header</h3>
 
-      <draggable :list="list2" class="list-group" group="a" item-key="name">
+      <draggable 
+        :list="pageData.list2" 
+        class="list-group" 
+        group="a" 
+        item-key="name"
+        :style="paddingStyleTwo">
         <template #header>
           <div
             class="list-group-title"
@@ -57,24 +77,50 @@
       </draggable>
     </div>
 
-    <rawDisplayer class="col-2" :value="list" title="List" />
+    <div class="col-4">
+      <h3>Second draggable with header</h3>
 
-    <rawDisplayer class="col-2" :value="list2" title="List2" />
+      <draggable 
+        :list="pageData.list3" 
+        class="list-group" 
+        group="a" 
+        item-key="name"
+        :style="paddingStyleThree">
+        <template #header>
+          <div
+            class="list-group-title"
+            role="group"
+            aria-label="Basic example"
+          >
+            <div class="task-index"></div>
+            <div class="task-name">Task</div>
+            <div class="task-status">Status</div>
+            <div class="task-create-date">Cerate Date</div>
+            <div class="task-due-date">Due Date</div>
+            <div class="task-desc">Text</div>
+          </div>
+        </template>
+        <template #item="{ element }">
+          <div class="list-group-item item">
+            <div class="task-index"></div>
+            <div class="task-name">{{ element.name }}</div>
+            <div class="task-status">Status</div>
+            <div class="task-create-date">Cerate Date</div>
+            <div class="task-due-date">Due Date</div>
+            <div class="task-desc">Text</div>
+          </div>
+        </template>
+      </draggable>
+    </div>
   </div>
 </template>
 
-<script>
+<script lang="ts" setup>
+import { computed, reactive } from "vue";
 import draggable from "vuedraggable";
+import Date from "../components/date.vue";
 let id = 1;
-export default {
-  name: "two-list-headerslots",
-  display: "Two list header slot",
-  order: 14,
-  components: {
-    draggable
-  },
-  data() {
-    return {
+const pageData = reactive({
       list: [
         { name: "John 1", id: 0 },
         { name: "Joao 2", id: 1 },
@@ -83,24 +129,24 @@ export default {
       list2: [
         { name: "Jonny 4", id: 3 },
         { name: "Guisepe 5", id: 4 }
+      ],
+      list3:[
+        { name: "Jonny 4", id: 3 },
+        { name: "Guisepe 5", id: 4 }
       ]
-    };
-  },
-  methods: {
-    add: function() {
-      this.list.push({ name: "Juan " + id, id: id++ });
-    },
-    replace: function() {
-      this.list = [{ name: "Edgard", id: id++ }];
-    },
-    add2: function() {
-      this.list2.push({ name: "Juan " + id, id: id++ });
-    },
-    replace2: function() {
-      this.list2 = [{ name: "Edgard", id: id++ }];
-    }
-  }
-};
+    })
+
+const paddingStyleOne = computed(() => ({
+  boxShadow: 'inset 10px 0 0 rgba(255, 0, 0, 0.5)'
+}));
+
+const paddingStyleTwo = computed(() => ({
+  boxShadow: 'inset 10px 0 0 rgba(51, 255, 0, 0.5)'
+}))
+
+const paddingStyleThree = computed(() => ({
+  boxShadow: 'inset 10px 0 0 rgba(0, 47, 255, 0.5)'
+}))
 </script>
 <style scoped>
 .col-4{
@@ -113,7 +159,6 @@ export default {
   background-color: white;
   border: 1px solid;
   padding-left: 10px;
-  box-shadow: inset 10px 0 0 rgba(255, 0, 0, 0.5);
 }
 .list-group-title{
   display: flex;
@@ -167,5 +212,8 @@ export default {
 }
 .item{
   
+}
+.date{
+
 }
 </style>
