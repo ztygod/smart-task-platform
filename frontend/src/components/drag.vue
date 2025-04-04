@@ -81,7 +81,7 @@ import { useTaskStore } from '../stores/taskStore';
 import type { TaskData } from '../types/base';
 import { useSocket } from '../composables/useSocket';
 
-const {socket} = useSocket();
+const {socket,on} = useSocket();
 const taskStore = useTaskStore();
 const dragData = reactive({
   list: taskStore.tasks
@@ -114,13 +114,14 @@ const onDragChange = () => {
 }
 
 onMounted(() => {
-  socket.on('taskDragUpdate',async () => {
+  on('taskDragUpdate',async () => {
     console.log('taskDragUpdate')
     await taskStore.fetchTask()
     window.location.reload()
 
   })
 });
+
 </script>
 
 <style scoped>

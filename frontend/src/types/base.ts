@@ -11,6 +11,11 @@ export default interface UserLogin {
     password: string,
 }
 
+export default interface UserInfo {
+    username: string,
+    id: string
+}
+
 export interface TaskCreate {
     title: string,
     state: string,

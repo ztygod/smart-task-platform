@@ -62,4 +62,36 @@ export class TaskGateway implements OnGatewayConnection {
     //向所有用户广播
     this.server.emit('taskDragUpdate')
   }
+
+  // 监听客户端的对任务描述的更新操作
+  @SubscribeMessage('docUpdate')
+  async handleDocUpdate(client: Socket, payload: {
+    taskId: number,
+    content: string,
+    userId: string,
+    timestamp: number
+  }) {
+
+    // 获取最新任务
+    const task = await this.taskService.findOne(payload.taskId);
+    console.log('=====1=====')
+    // 冲突检查（最后写入胜出）
+    if (payload.timestamp > task.updated_at.getTime()) {
+      // 更新数据库
+      await this.taskService.updateDescription(
+        {
+          id: '' + payload.taskId,
+          description: payload.content
+        }
+      )
+      console.log('=====2=====')
+      // 广播给其他用户
+      client.broadcast.emit('docUpdate', {
+        taskId: payload.taskId,
+        content: payload.content,
+        updatedAt: new Date(payload.timestamp)
+      })
+      console.log('=====3=====')
+    }
+  }
 }

@@ -45,7 +45,7 @@ import { useSocket } from '../composables/useSocket';
 import { ElMessage } from 'element-plus';
 
 const visible = ref(false)
-const {socket} = useSocket();
+const {socket,on,emit} = useSocket();
 const popoverData = reactive({
     state: '待开始',
     style: [] as any,
@@ -110,7 +110,7 @@ const changeStatus = (statusNow:String) => {
 //开始编辑任务状态时通知其他人
 const startStatusEditing = () => {
   visible.value = true;
-  socket.emit('taskStatusEditing',{
+  emit('taskStatusEditing',{
     taskId:popoverModel.value.id,
   })
   console.log("开始编辑任务状态时通知其他人")
@@ -131,7 +131,7 @@ const stopStatusEditing = (statusNow:String) => {
     }
   ).then(() => {})
 
-  socket.emit('taskStatusEditEnd',{
+  emit('taskStatusEditEnd',{
     taskId:popoverModel.value.id,
     status:statusNow
   });
@@ -141,7 +141,7 @@ const stopStatusEditing = (statusNow:String) => {
 
 //监听他人编辑事件
 onMounted(() => {
-  socket.on('taskStatusEditing',({taskId}) => {
+  on('taskStatusEditing',({taskId}) => {
     console.log(22222)
     if(taskId === popoverModel.value.id){
       ElMessage(`任务 ${popoverModel.value.title} 正在被修改`)
