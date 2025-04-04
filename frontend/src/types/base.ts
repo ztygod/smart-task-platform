@@ -16,6 +16,10 @@ export interface UserStorage {
     id: string,
 }
 
+export interface UserInfo {
+    username: string,
+    id: string
+}
 export interface TaskCreate {
     title: string,
     state: string,
