@@ -42,6 +42,7 @@ export class TaskGateway implements OnGatewayConnection {
   //监听任务更新事件
   @SubscribeMessage('taskStatusEditEnd')
   handleStatusEditEnd(client: Socket, payload: { taskId: String, status: String }) {
+    console.log('验证')
     //向其他用户进行广播
     client.broadcast.emit('taskStatusEditEnd', {
       taskId: payload.taskId,
@@ -101,10 +102,42 @@ export class TaskGateway implements OnGatewayConnection {
     })
   }
 
-  // 监听客户端的OT操作
-  @SubscribeMessage('otOperation')
+  // 监听客户端的编辑操作
+  @SubscribeMessage('join-doc')
   handleOTOperation(client: Socket, payload: { taskId: string, operation: any }) {
     console.log('协同编辑');
     const { taskId, operation } = payload;
+  }
+
+  // 监听客户端的对任务描述的更新操作
+  @SubscribeMessage('doc-update')
+  async handleDocUpdate(client: Socket, payload: {
+    taskId: string,
+    content: string,
+    userId: string,
+    timestamp: number
+  }) {
+
+    console.log(payload)
+    // 获取最新任务
+    const task = await this.taskService.findOne(+payload.taskId);
+
+    // 冲突检查（最后写入胜出）
+    if (payload.timestamp > task.updated_at.getTime()) {
+      // 更新数据库
+      await this.taskService.updateDescription(
+        {
+          id: payload.taskId,
+          description: payload.content
+        }
+      )
+
+      // 广播给其他用户
+      client.broadcast.emit('doc-update', {
+        taskId: payload.taskId,
+        content: payload.content,
+        updatedAt: new Date(payload.timestamp)
+      })
+    }
   }
 }

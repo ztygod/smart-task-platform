@@ -43,7 +43,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, reactive, ref } from "vue";
+import { computed, onMounted, onUnmounted, reactive } from "vue";
 import draggable from "vuedraggable";
 import { useTaskStore } from "../stores/taskStore";
 import type { TaskData, UserInfo } from "../types/base";
@@ -62,16 +62,6 @@ const pageData = reactive({
         { name: "Jonny 4", id: 3 },
         { name: "Guisepe 5", id: 4 }
     ],
-})
-const props = defineProps({
-    task:{
-        type: String,
-        default:'',
-        required: true
-    },
-    value:{
-        required:true
-    }
 })
 const paddingStyleOne = computed(() => ({
   boxShadow: 'inset 10px 0 0 rgba(255, 0, 0, 0.5)'
@@ -95,15 +85,25 @@ const handleInput = debounce((taskId:string,taskDesc:string) => {
     socket.emit('doc-update',{
         takeId:taskId,
         content:taskDesc,
-        userId:userInfo.id,
+        userId:userInfo.id + '',
         timestamp:Date.now()
     })
+    console.log('end')
 },500);
 
 onMounted(() => {
-    socket.on('doc-update',(date) => {
-
+    socket.on('doc-update',({taskId,content,updatedAt}) => {
+      console.log('实施编辑成功')
+      taskStore.tasks.forEach((item) => {
+        if(item.id === taskId){
+          item.description = content
+        }
+      })
     })
+})
+
+onUnmounted(() => {
+  socket.disconnect()
 })
 </script>
 <style scoped>
