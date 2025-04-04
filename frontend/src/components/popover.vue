@@ -148,7 +148,7 @@ onMounted(() => {
     }
   });
 
-  socket.on('taskStatusEditEnd',({taskId,status}) => {
+  on('taskStatusEditEnd',({taskId,status}) => {
     if((taskId === popoverModel.value.id)){
       let taskStatus;
       switch(status){

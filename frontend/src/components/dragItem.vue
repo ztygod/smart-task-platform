@@ -51,7 +51,7 @@ import { useSocket } from "../composables/useSocket";
 import { debounce } from "../utils.ts";
 
 const taskStore = useTaskStore()
-const {socket} = useSocket()
+const {socket,on,emit} = useSocket()
 const pageData = reactive({
     list: taskStore.tasks
         .map((item:TaskData) => {
@@ -82,17 +82,17 @@ const handleInput = debounce((taskId:string,taskDesc:string) => {
     console.log('taskId',taskId);
     console.log('taskDesc',taskDesc)
     
-    socket.emit('docUpdate',{
+    emit('docUpdate',{
         taskId:Number(taskId),
         content:taskDesc,
         userId:userInfo.id + '',
         timestamp:Date.now()
     })
     console.log('end')
-},2000);
+},500);
 
 onMounted(() => {
-    socket.on('docUpdate',({taskId,content,updatedAt}) => {
+    on('docUpdate',({taskId,content,updatedAt}) => {
       taskStore.tasks.forEach((item) => {
         if(item.id === taskId){
           item.description = content

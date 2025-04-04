@@ -1,5 +1,4 @@
 import { io, Socket } from 'socket.io-client'
-import { ref } from 'vue'
 
 const SOCKET_URL = 'http://localhost:3000'
 
@@ -12,6 +11,8 @@ class SocketManager {
             transports: ['websocket'],
             autoConnect: false
         })
+        // 在构造时连接 socket
+        this.connect()
     }
 
     // 获取 Socket 实例（公开 getter）
@@ -54,6 +55,7 @@ class SocketManager {
     public connect() {
         if (!this.socket.connected) {
             this.socket.connect()
+            console.log('connect')
         }
     }
 
@@ -61,6 +63,7 @@ class SocketManager {
     public disconnect() {
         if (this.socket.connected) {
             this.socket.disconnect()
+            console.log('disconnect')
         }
     }
 }

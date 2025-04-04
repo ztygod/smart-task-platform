@@ -71,7 +71,7 @@ export class TaskGateway implements OnGatewayConnection {
     userId: string,
     timestamp: number
   }) {
-
+    console.log('=====0=====')
     // 获取最新任务
     const task = await this.taskService.findOne(payload.taskId);
     console.log('=====1=====')
