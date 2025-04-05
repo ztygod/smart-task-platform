@@ -3,7 +3,7 @@ import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Task } from './entities/task.entity';
-import { Repository } from 'typeorm';
+import { Code, Repository } from 'typeorm';
 import { validate } from 'class-validator';
 import { TaskRo, TaskStatus } from './task.interface';
 import { createByNaturalLanguageDto } from './dto/create-by-natural-language.dto';
@@ -126,12 +126,33 @@ export class TaskService {
   //更新任务状态
   async updateStatus(updateTaskStatusDto: UpdateTaskStatusDto): Promise<Task> {
     const { id, status, version } = updateTaskStatusDto;
+<<<<<<< HEAD
     const task = await this.findOne(+id);
+=======
+>>>>>>> feat/rebuild
 
-    if (!task) {
-      throw new NotFoundException(`ID 为 ${id} 的任务不存在`);
+    // 使用createQueryBuilder实现原子操作
+    const result = await this.taskRepository
+      .createQueryBuilder()
+      .update(Task)
+      .set({
+        status,
+        version: () => "version + 1" // 直接使用SQL表达式自增
+      })
+      .where("id = :id AND version = :version", { id, version })
+      .execute();
+
+    // 检查更新是否成功
+    if (result.affected === 0) {
+      const latestDate = await this.taskRepository.findOne({ where: { id } });
+      throw new ConflictException({
+        code: 'CONCURRENT_UPDATE',
+        message: '任务已被其他人修改',
+        latestDate
+      });
     }
 
+<<<<<<< HEAD
     if (task.version !== version) {
       throw new ConflictException({
         code: 'VERSION_MISMATCH',
@@ -143,6 +164,9 @@ export class TaskService {
     task.status = status;
     task.version = version + 1;
     return this.taskRepository.save(task);
+=======
+    return this.taskRepository.findOne({ where: { id } })
+>>>>>>> feat/rebuild
   }
 
   //更新任务描述，逻辑与上面一致

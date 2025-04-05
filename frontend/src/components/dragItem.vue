@@ -46,12 +46,12 @@
 import { computed, onMounted, onUnmounted, reactive } from "vue";
 import draggable from "vuedraggable";
 import { useTaskStore } from "../stores/taskStore";
-import type { TaskData, UserInfo } from "../types/base";
+import type { TaskData } from "../types/base";
 import { useSocket } from "../composables/useSocket";
-import { debounce } from "../utils";
+import { debounce } from "../utils.ts";
 
 const taskStore = useTaskStore()
-const {socket} = useSocket()
+const {on,emit} = useSocket()
 const pageData = reactive({
     list: taskStore.tasks
         .map((item:TaskData) => {
@@ -76,14 +76,14 @@ const paddingStyleThree = computed(() => ({
 }));
 
 const handleInput = debounce((taskId:string,taskDesc:string) => {
-    const userInfo: UserInfo = JSON.parse(localStorage.getItem('userInfo')!) as UserInfo;
+    const userInfo = JSON.parse(localStorage.getItem('userInfo')!);
 
     console.log('userInfo',userInfo);
     console.log('taskId',taskId);
     console.log('taskDesc',taskDesc)
     
-    socket.emit('doc-update',{
-        takeId:taskId,
+    emit('docUpdate',{
+        taskId:Number(taskId),
         content:taskDesc,
         userId:userInfo.id + '',
         timestamp:Date.now()
@@ -92,19 +92,16 @@ const handleInput = debounce((taskId:string,taskDesc:string) => {
 },500);
 
 onMounted(() => {
-    socket.on('doc-update',({taskId,content,updatedAt}) => {
-      console.log('实施编辑成功')
+    on('docUpdate',({taskId,content,updatedAt}) => {
       taskStore.tasks.forEach((item) => {
         if(item.id === taskId){
           item.description = content
         }
       })
+      console.log('实施编辑成功')
     })
 })
 
-onUnmounted(() => {
-  socket.disconnect()
-})
 </script>
 <style scoped>
 .col-4{

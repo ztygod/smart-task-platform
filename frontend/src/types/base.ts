@@ -11,6 +11,7 @@ export default interface UserLogin {
     password: string,
 }
 
+<<<<<<< HEAD
 export interface UserStorage {
     username: string,
     id: string,
@@ -20,6 +21,13 @@ export interface UserInfo {
     username: string,
     id: string
 }
+=======
+export default interface UserInfo {
+    username: string,
+    id: string
+}
+
+>>>>>>> feat/rebuild
 export interface TaskCreate {
     title: string,
     state: string,
@@ -35,7 +43,7 @@ export interface TaskData {
     created_at: string,
     updated_at: string,
     order: string,
-    version: string,
+    version: number
 }
 export enum TaskState {
     Wait = '0',
@@ -46,7 +54,7 @@ export enum TaskState {
 export interface UpdateTaskStatus {
     id: string,
     status: string,
-    version: string,
+    version: number
 }
 
 export interface UpdateTaskDescription {

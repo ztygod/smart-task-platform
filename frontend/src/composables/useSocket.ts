@@ -1,33 +1,29 @@
-import { io, Socket } from "socket.io-client";
-import { onUnmounted, ref } from "vue";
-
-const SOCKET_URL = 'http://localhost:3000';
-
-const socket: Socket = io(SOCKET_URL, {
-    transports: ['websocket'],
-    autoConnect: false,//需要手动连接
-})
-
-//连接状态
-const isConnected = ref(false);
-
-//监听websocket事件
-socket.on('connect', () => {
-    isConnected.value = false;
-    console.log('Connected to WebSocket server');
-})
-
-socket.on('disconnect', () => {
-    isConnected.value = false;
-    console.log('Disconnected from WebSocket server');
-})
+import { ref, onUnmounted } from 'vue'
+import { socketManager } from '../socket'
 
 export function useSocket() {
-    socket.connect();
+    // 存储注册的事件
+    const eventRegistry = ref<Record<string, (...args: any[]) => void>>({})
+
+    // 注册事件
+    const on = (event: string, handler: (...args: any[]) => void) => {
+        eventRegistry.value[event] = handler
+        socketManager.on(event, handler)
+    }
+
+    // 发送事件
+    const emit = (event: string, data: any) => {
+        socketManager.getSocket().emit(event, data)
+    }
+
+    // 组件卸载时清理事件监听
     onUnmounted(() => {
-        socket.off('connect');
-        socket.off('disconnect');
+        socketManager.cleanup(eventRegistry.value)
     })
 
-    return { socket, isConnected };
+    return {
+        socket: socketManager.getSocket(),
+        on,    // 暴露注册事件的安全方法
+        emit   // 暴露发送事件的方法
+    }
 }
