@@ -81,7 +81,7 @@ import { useTaskStore } from '../stores/taskStore';
 import type { TaskData } from '../types/base';
 import { useSocket } from '../composables/useSocket';
 
-const {socket,on,emit} = useSocket();
+const {on,emit} = useSocket();
 const taskStore = useTaskStore();
 const dragData = reactive({
   list: taskStore.tasks

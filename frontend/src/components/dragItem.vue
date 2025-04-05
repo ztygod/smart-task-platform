@@ -51,7 +51,7 @@ import { useSocket } from "../composables/useSocket";
 import { debounce } from "../utils.ts";
 
 const taskStore = useTaskStore()
-const {socket,on,emit} = useSocket()
+const {on,emit} = useSocket()
 const pageData = reactive({
     list: taskStore.tasks
         .map((item:TaskData) => {

@@ -43,13 +43,15 @@ import { HTTPMethod, TaskState, type TaskData } from '../types/base'
 import task from '../apis/task';
 import { useSocket } from '../composables/useSocket';
 import { ElMessage } from 'element-plus';
+import { AxiosError } from 'axios';
 
 const visible = ref(false)
-const {socket,on,emit} = useSocket();
+const {on,emit} = useSocket();
 const popoverData = reactive({
     state: '待开始',
     style: [] as any,
 })
+const status = ['未完成','代开始','已完成']
 let popoverModel = defineModel<TaskData>({
     default:() => ({
       id: '1',
@@ -59,7 +61,8 @@ let popoverModel = defineModel<TaskData>({
       due_date: '2025-3-10',
       created_at: '2025-3-10',
       updated_at: '2025-3-10',
-      order:'9999'
+      order:'9999',
+      version:9999
     })
 });
 
@@ -117,28 +120,49 @@ const startStatusEditing = () => {
 }
 
 //停止编辑时通知
-const stopStatusEditing = (statusNow:String) => {
-  //前端按钮样式修改
-  changeStatus(statusNow);
+const stopStatusEditing = async(statusNow:String) => {
+  try {
+    //前端按钮样式修改
+    changeStatus(statusNow);
 
-  //向后端传递任务状态新值
-  task.updateTaskStatus(
-    '/task/update/status',
-    HTTPMethod.PATCH,
-    {
-      id:popoverModel.value.id,
-      status:popoverModel.value.status
+    // 获取当前版本
+    const currentVersion = popoverModel.value.version || 1;
+
+    //向后端传递任务状态新值
+    const updateTask = await task.updateTaskStatus(
+      '/task/update/status',
+      HTTPMethod.PATCH,
+      {
+        id:popoverModel.value.id,
+        status:popoverModel.value.status,
+        version: 0
+      }
+    )
+    console.log(updateTask)
+    popoverModel.value.version = updateTask.data.version
+
+    emit('taskStatusEditEnd',{
+      taskId:popoverModel.value.id,
+      status:statusNow
+    });
+    console.log("停止编辑时通知");
+  } catch (error:any) {
+    if (error.status === 409){
+      console.log(error)
+      const {latestDate} = error.response.data;
+      handleConflict(latestDate)
     }
-  ).then(() => {})
-
-  emit('taskStatusEditEnd',{
-    taskId:popoverModel.value.id,
-    status:statusNow
-  });
-  console.log("停止编辑时通知");
-  
+  }
 }
 
+// 冲突处理函数
+const handleConflict = (latestData: TaskData) => {
+  ElMessage({
+    message: `任务 ${popoverModel.value.title} 状态被其他人修改为 ${status[+latestData.status]}`,
+    type: 'error',
+    plain: true,
+  })
+}
 //监听他人编辑事件
 onMounted(() => {
   on('taskStatusEditing',({taskId}) => {

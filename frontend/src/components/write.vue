@@ -27,7 +27,8 @@ const writeModel = defineModel<TaskData>({
       due_date: '2025-3-10',
       created_at: '2025-3-10',
       updated_at: '2025-3-10',
-      order:'9999'
+      order:'9999',
+      version:9999
     })
 })
 const disabled = ref(true);
