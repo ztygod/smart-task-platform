@@ -31,11 +31,7 @@ const writeModel = defineModel<TaskData>({
       created_at: '2025-3-10',
       updated_at: '2025-3-10',
       order:'9999',
-<<<<<<< HEAD
-      version:'9999',
-=======
       version:9999
->>>>>>> feat/rebuild
     })
 })
 const disabled = ref(true);

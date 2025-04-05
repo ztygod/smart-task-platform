@@ -126,10 +126,6 @@ export class TaskService {
   //更新任务状态
   async updateStatus(updateTaskStatusDto: UpdateTaskStatusDto): Promise<Task> {
     const { id, status, version } = updateTaskStatusDto;
-<<<<<<< HEAD
-    const task = await this.findOne(+id);
-=======
->>>>>>> feat/rebuild
 
     // 使用createQueryBuilder实现原子操作
     const result = await this.taskRepository
@@ -152,21 +148,7 @@ export class TaskService {
       });
     }
 
-<<<<<<< HEAD
-    if (task.version !== version) {
-      throw new ConflictException({
-        code: 'VERSION_MISMATCH',
-        message: '任务已被其他人修改',
-        lastestData: task
-      })
-    }
-
-    task.status = status;
-    task.version = version + 1;
-    return this.taskRepository.save(task);
-=======
     return this.taskRepository.findOne({ where: { id } })
->>>>>>> feat/rebuild
   }
 
   //更新任务描述，逻辑与上面一致
