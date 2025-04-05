@@ -11,23 +11,11 @@ export default interface UserLogin {
     password: string,
 }
 
-<<<<<<< HEAD
-export interface UserStorage {
-    username: string,
-    id: string,
-}
-
-export interface UserInfo {
-    username: string,
-    id: string
-}
-=======
 export default interface UserInfo {
     username: string,
     id: string
 }
 
->>>>>>> feat/rebuild
 export interface TaskCreate {
     title: string,
     state: string,

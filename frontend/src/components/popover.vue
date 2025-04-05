@@ -47,7 +47,7 @@ import { AxiosError } from 'axios';
 import { useTaskStore } from '../stores/taskStore';
 
 const visible = ref(false)
-const {socket} = useSocket();
+const {socket,on,emit} = useSocket();
 const popoverData = reactive({
     state: '待开始',
     style: [] as any,
@@ -134,7 +134,8 @@ const stopStatusEditing = async(statusNow:String) => {
     HTTPMethod.PATCH,
     {
       id:popoverModel.value.id,
-      status:popoverModel.value.status
+      status:popoverModel.value.status,
+      version:currentVersion
     }
   ).then(() => {})
 
@@ -169,7 +170,7 @@ onMounted(() => {
     }
   });
 
-  socket.on('taskStatusEditEnd',({taskId,status}) => {
+  on('taskStatusEditEnd',async({taskId,status}) => {
     if((taskId === popoverModel.value.id)){
       let taskStatus;
       switch(status){
